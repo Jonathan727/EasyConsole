@@ -2,7 +2,7 @@
 {
     public class Menu
     {
-        private IList<Option> Options { get; set; }
+        private IList<Option> Options { get; }
 
         public Menu()
         {
@@ -11,12 +11,12 @@
 
         public async Task Display()
         {
-            for (int i = 0; i < Options.Count; i++)
+            for (var i = 0; i < Options.Count; i++)
             {
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
 
-            int choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
+            var choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
 
             await Options[choice - 1].Callback();
         }

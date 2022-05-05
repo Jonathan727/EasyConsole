@@ -14,7 +14,7 @@ namespace Demo.Pages
         {
             await base.Display();
 
-            Fruit input = await Input.ReadEnum<Fruit>("Select a fruit");
+            var input = await Input.ReadEnum<Fruit>("Select a fruit");
             Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
 
             Input.ReadString("Press [Enter] to navigate home");

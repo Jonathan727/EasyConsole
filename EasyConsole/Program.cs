@@ -52,7 +52,7 @@ namespace EasyConsole
 
         public void AddPage(Page page)
         {
-            Type pageType = page.GetType();
+            var pageType = page.GetType();
 
             if (Pages.ContainsKey(pageType))
             {
@@ -72,16 +72,20 @@ namespace EasyConsole
             }
 
             Console.Clear();
+            if (CurrentPage == null)
+            {
+                throw new InvalidOperationException();
+            }
             await CurrentPage.Display();
         }
 
         public T SetPage<T>() where T : Page
         {
-            Type pageType = typeof(T);
+            var pageType = typeof(T);
 
-            if (CurrentPage != null && CurrentPage.GetType() == pageType)
+            if (CurrentPage is T currentPage)
             {
-                return CurrentPage as T;
+                return currentPage;
             }
 
             // leave the current page
@@ -89,29 +93,37 @@ namespace EasyConsole
             // select the new page
             if (!Pages.TryGetValue(pageType, out var nextPage))
             {
-                throw new KeyNotFoundException("The given page \"{0}\" was not present in the program".Format(pageType));
+                throw new KeyNotFoundException($"The given page '{typeof(T)}' was not present in the program");
             }
 
             // enter the new page
             History.Push(nextPage);
 
-            return CurrentPage as T;
+            return CurrentPage as T ?? throw new InvalidOperationException();
         }
 
         public async Task<T> NavigateTo<T>() where T : Page
         {
-            SetPage<T>();
-
             Console.Clear();
-            await CurrentPage.Display();
-            return CurrentPage as T;
+
+            await SetPage<T>().Display();
+            return CurrentPage as T ?? throw new InvalidOperationException();
         }
 
         public async Task<Page> NavigateBack()
         {
+            if (!NavigationEnabled)
+            {
+                throw new InvalidOperationException("Cannot navigate back, navigation history is already empty");
+            }
             History.Pop();
 
             Console.Clear();
+            if (CurrentPage == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             await CurrentPage.Display();
             return CurrentPage;
         }

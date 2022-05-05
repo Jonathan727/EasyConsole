@@ -12,7 +12,7 @@ namespace EasyConsole
 
         public static int ReadInt(int min, int max)
         {
-            int value = ReadInt();
+            var value = ReadInt();
 
             while (value < min || value > max)
             {
@@ -25,7 +25,7 @@ namespace EasyConsole
 
         public static int ReadInt()
         {
-            string input = Console.ReadLine();
+            var input = Console.ReadLine();
             int value;
 
             while (!int.TryParse(input, out value))
@@ -37,7 +37,7 @@ namespace EasyConsole
             return value;
         }
 
-        public static string ReadString(string prompt)
+        public static string? ReadString(string prompt)
         {
             Output.DisplayPrompt(prompt);
             return Console.ReadLine();
@@ -45,15 +45,15 @@ namespace EasyConsole
 
         public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
         {
-            Type type = typeof(TEnum);
+            var type = typeof(TEnum);
 
             if (!type.IsEnum)
                 throw new ArgumentException("TEnum must be an enumerated type");
 
             Output.WriteLine(prompt);
-            Menu menu = new Menu();
+            var menu = new Menu();
 
-            TEnum choice = default(TEnum);
+            var choice = default(TEnum);
             foreach (var value in Enum.GetValues(type))
             {
                 menu.Add(Enum.GetName(type, value), () =>
