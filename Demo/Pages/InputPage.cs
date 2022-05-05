@@ -10,15 +10,15 @@ namespace Demo.Pages
         {
         }
 
-        public override void Display()
+        public override async Task Display()
         {
-            base.Display();
+            await base.Display();
 
-            Fruit input = Input.ReadEnum<Fruit>("Select a fruit");
+            Fruit input = await Input.ReadEnum<Fruit>("Select a fruit");
             Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
 
             Input.ReadString("Press [Enter] to navigate home");
-            Program.NavigateHome();
+            await Program.NavigateHome();
         }
     }
 

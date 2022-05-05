@@ -2,9 +2,9 @@
 {
     class Runner
     {
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            new DemoProgram().Run();
+            await new DemoProgram().Run();
         }
     }
 }

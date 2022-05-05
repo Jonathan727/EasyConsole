@@ -9,14 +9,14 @@ namespace Demo.Pages
         {
         }
 
-        public override void Display()
+        public override async Task Display()
         {
-            base.Display();
+            await base.Display();
 
             Output.WriteLine("Hello from Page 2");
 
             Input.ReadString("Press [Enter] to navigate home");
-            Program.NavigateHome();
+            await Program.NavigateHome();
         }
     }
 }
