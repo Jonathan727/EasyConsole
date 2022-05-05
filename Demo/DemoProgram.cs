@@ -15,6 +15,7 @@ namespace Demo
             AddPage(new Page1B(this));
             AddPage(new Page2(this));
             AddPage(new InputPage(this));
+            AddPage(new SampleTablePage(this));
 
             SetPage<MainPage>();
         }
