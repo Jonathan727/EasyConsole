@@ -8,7 +8,7 @@ namespace EasyConsole
 
         public bool BreadcrumbHeader { get; }
 
-        protected Page? CurrentPage => History.Any() ? History.Peek() : null;
+        protected Page CurrentPage => History.Peek();
 
         private Dictionary<Type, Page> Pages { get; }
 
@@ -72,41 +72,16 @@ namespace EasyConsole
             }
 
             Console.Clear();
-            if (CurrentPage == null)
-            {
-                throw new InvalidOperationException();
-            }
             await CurrentPage.Display();
-        }
-
-        public T SetPage<T>() where T : Page
-        {
-            var pageType = typeof(T);
-
-            if (CurrentPage is T currentPage)
-            {
-                return currentPage;
-            }
-
-            // leave the current page
-
-            // select the new page
-            if (!Pages.TryGetValue(pageType, out var nextPage))
-            {
-                throw new KeyNotFoundException($"The given page '{typeof(T)}' was not present in the program");
-            }
-
-            // enter the new page
-            History.Push(nextPage);
-
-            return CurrentPage as T ?? throw new InvalidOperationException();
         }
 
         public async Task<T> NavigateTo<T>() where T : Page
         {
+            SetPage<T>();
+
             Console.Clear();
 
-            await SetPage<T>().Display();
+            await CurrentPage.Display();
             return CurrentPage as T ?? throw new InvalidOperationException();
         }
 
@@ -119,13 +94,30 @@ namespace EasyConsole
             History.Pop();
 
             Console.Clear();
-            if (CurrentPage == null)
-            {
-                throw new InvalidOperationException();
-            }
 
             await CurrentPage.Display();
             return CurrentPage;
+        }
+
+        public T SetPage<T>() where T : Page
+        {
+            if (History.Any() && CurrentPage is T currentPage)
+            {
+                return currentPage;
+            }
+
+            // leave the current page
+
+            // select the new page
+            if (!Pages.TryGetValue(typeof(T), out var nextPage))
+            {
+                throw new KeyNotFoundException($"The given page '{typeof(T)}' was not present in the program");
+            }
+
+            // enter the new page
+            History.Push(nextPage);
+
+            return CurrentPage as T ?? throw new InvalidOperationException();
         }
     }
 }
