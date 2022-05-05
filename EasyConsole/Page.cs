@@ -14,16 +14,9 @@
 
         public virtual Task Display()
         {
-            if (Program.History.Count > 1 && Program.BreadcrumbHeader)
+            if (Program.BreadcrumbHeader)
             {
-                //TODO: just use string.join?
-                string breadcrumb = null;
-                foreach (var title in Program.History.Select(page => page.Title).Reverse())
-                {
-                    breadcrumb += title + " > ";
-                }
-
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
+                var breadcrumb = string.Join(" > ", Program.History.Reverse().Select(page => page.Title));
                 Console.WriteLine(breadcrumb);
             }
             else
