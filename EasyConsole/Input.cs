@@ -43,7 +43,7 @@ namespace EasyConsole
             return Console.ReadLine();
         }
 
-        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
         {
             Type type = typeof(TEnum);
 
@@ -55,8 +55,15 @@ namespace EasyConsole
 
             TEnum choice = default(TEnum);
             foreach (var value in Enum.GetValues(type))
-                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum)value; });
-            menu.Display();
+            {
+                menu.Add(Enum.GetName(type, value), () =>
+                {
+                    choice = (TEnum)value;
+                    return Task.CompletedTask;
+                });
+            }
+
+            await menu.Display();
 
             return choice;
         }

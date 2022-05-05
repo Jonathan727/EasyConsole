@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace EasyConsole
+﻿namespace EasyConsole
 {
     public class Menu
     {
@@ -13,18 +9,19 @@ namespace EasyConsole
             Options = new List<Option>();
         }
 
-        public void Display()
+        public async Task Display()
         {
             for (int i = 0; i < Options.Count; i++)
             {
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
+
             int choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
 
-            Options[choice - 1].Callback();
+            await Options[choice - 1].Callback();
         }
 
-        public Menu Add(string option, Action callback)
+        public Menu Add(string option, Func<Task> callback)
         {
             return Add(new Option(option, callback));
         }

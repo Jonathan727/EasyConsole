@@ -1,13 +1,12 @@
-﻿using System;
-
-namespace EasyConsole
+﻿namespace EasyConsole
 {
     public class Option
     {
         public string Name { get; private set; }
-        public Action Callback { get; private set; }
 
-        public Option(string name, Action callback)
+        public Func<Task> Callback { get; private set; }
+
+        public Option(string name, Func<Task> callback)
         {
             Name = name;
             Callback = callback;
