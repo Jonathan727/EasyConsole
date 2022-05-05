@@ -11,8 +11,4 @@
 	  <ProjectReference Include="..\EasyConsole\EasyConsole.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Properties\" />
-	</ItemGroup>
-
 </Project>
