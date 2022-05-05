@@ -2,9 +2,9 @@
 {
     public abstract class Page
     {
-        public string Title { get; private set; }
+        public string Title { get; }
 
-        public Program Program { get; set; }
+        public Program Program { get; }
 
         protected Page(string title, Program program)
         {

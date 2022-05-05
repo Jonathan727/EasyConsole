@@ -2,9 +2,9 @@
 {
     public class Option
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public Func<Task> Callback { get; private set; }
+        public Func<Task> Callback { get; }
 
         public Option(string name, Func<Task> callback)
         {
@@ -12,9 +12,6 @@
             Callback = callback;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 }

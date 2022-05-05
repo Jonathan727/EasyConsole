@@ -4,15 +4,15 @@ namespace EasyConsole
 {
     public abstract class Program
     {
-        protected string Title { get; set; }
+        protected string Title { get; }
 
-        public bool BreadcrumbHeader { get; private set; }
+        public bool BreadcrumbHeader { get; }
 
         protected Page? CurrentPage => History.Any() ? History.Peek() : null;
 
-        private Dictionary<Type, Page> Pages { get; set; }
+        private Dictionary<Type, Page> Pages { get; }
 
-        public Stack<Page> History { get; private set; }
+        public Stack<Page> History { get; }
 
         public bool NavigationEnabled => History.Count > 1;
 
