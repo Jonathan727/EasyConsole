@@ -43,26 +43,33 @@ namespace EasyConsole
             return Console.ReadLine();
         }
 
-        public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
         {
-            var type = typeof(TEnum);
-
-            if (!type.IsEnum)
-                throw new ArgumentException("TEnum must be an enumerated type");
+            if (!typeof(TEnum).IsEnum)
+            {
+                throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
+            }
 
             Output.WriteLine(prompt);
             var menu = new Menu();
 
-            var choice = default(TEnum);
-            foreach (var value in Enum.GetValues(type))
+            var names = Enum.GetNames<TEnum>();
+            var values = Enum.GetValues<TEnum>();
+
+            if (names.Length != values.Length)
             {
-                menu.Add(Enum.GetName(type, value), () =>
+                throw new ArgumentException($"{nameof(Enum)}.{nameof(Enum.GetNames)}.{nameof(names.Length)} != {nameof(Enum)}.{nameof(Enum.GetValues)}.{nameof(values.Length)}", nameof(TEnum));
+            }
+
+            var choice = default(TEnum);
+            foreach (var (name, value) in names.Zip(values))
+            {
+                menu.Add(name, () =>
                 {
-                    choice = (TEnum)value;
+                    choice = value;
                     return Task.CompletedTask;
                 });
             }
-
             await menu.Display();
 
             return choice;
