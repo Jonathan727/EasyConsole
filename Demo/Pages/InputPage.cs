@@ -17,6 +17,9 @@ namespace Demo.Pages
             var input = await Input.ReadEnum<Fruit>("Select a fruit");
             Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
 
+            var input2 = Input.ReadMultiChoiceEnum<Fruit>("Select multiple fruits");
+            Output.WriteLine(ConsoleColor.Green, "You selected {0}", string.Join(", ", input2));
+
             const int min = -10000;
             const int max = 10000;
             var choices = Input.ReadMultiChoiceInt($"Select numbers between {min:N0} and {max:N0} (comma delimited)", min, max);
