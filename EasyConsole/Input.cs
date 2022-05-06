@@ -1,4 +1,5 @@
 ﻿using System;
+using EasyConsole.Types;
 
 namespace EasyConsole
 {
@@ -16,7 +17,7 @@ namespace EasyConsole
 
             while (value < min || value > max)
             {
-                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive)", min, max);
+                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive):", min, max);
                 value = ReadInt();
             }
 
@@ -35,6 +36,33 @@ namespace EasyConsole
             }
 
             return value;
+        }
+
+        public static IReadOnlyCollection<int> ReadMultiChoiceInt(string prompt, int min, int max)
+        {
+            Output.DisplayPrompt(prompt);
+            return ReadMultiChoiceInt(min, max);
+        }
+
+        public static IReadOnlyCollection<int> ReadMultiChoiceInt(int min, int max)
+        {
+            while (true) // Loop indefinitely
+            {
+                var userInput = Console.ReadLine();
+                if (userInput == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
+
+                var values = userInput.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var results = Array.ConvertAll(values, s => int.TryParse(s, out var i) ? (int?)i : null);
+                if (results.Any() && !results.Any(x => x is null || x < min || x > max))
+                {
+                    return Array.ConvertAll(results, x => x!.Value);
+                }
+
+                Output.DisplayPrompt($"Please enter a comma delimited list of integers between {min} and {max} (inclusive):");
+            }
         }
 
         public static string? ReadString(string prompt)
