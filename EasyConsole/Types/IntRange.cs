@@ -61,7 +61,7 @@
             return this == other;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is IntRange range && this == range;
         }
