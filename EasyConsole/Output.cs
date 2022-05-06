@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace EasyConsole
 {
@@ -25,7 +26,14 @@ namespace EasyConsole
 
         public static void DisplayPrompt(string format, params object[] args)
         {
-            format = format.Trim() + " ";
+            const string promptEnd = ": ";
+            if (format.EndsWith(promptEnd))
+            {
+                Console.Write(format.TrimStart(), args);
+                return;
+            }
+
+            format = format.Trim().TrimEnd(':') + promptEnd;
             Console.Write(format, args);
         }
     }
