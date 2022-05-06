@@ -4,6 +4,7 @@ namespace Demo.Pages
 {
     class InputPage : Page
     {
+        public string? FavoritePlace { get; set; } = "Home";
         public InputPage(Program program)
             : base("Input", program)
         {
@@ -12,7 +13,7 @@ namespace Demo.Pages
         public override async Task Display()
         {
             await base.Display();
-            while (true) //TODO: provide a way to navigate home
+            while (true)
             {
                 var demo = Input.ReadEnum<InputDemo>("Select a demo");
                 Output.WriteLine(ConsoleColor.Green, "You selected {0}", demo);
@@ -53,11 +54,21 @@ namespace Demo.Pages
                         Output.WriteLine(ConsoleColor.Green, $"You selected {string.Join("; ", choices.Select(x => $"{x:n0}"))}");
                         break;
                     }
+                    case InputDemo.StringWithDefault:
+                    {
+                        FavoritePlace = Input.ReadStringWithDefault("What is your favorite place?", FavoritePlace);
+                        Output.WriteLine(ConsoleColor.Green, $"Your favorite place is '{FavoritePlace}'");
+                        break;
+                    }
                     default:
                     {
                         Output.WriteLine(ConsoleColor.Red, $"Demo for {Enum.GetName(demo)} not implemented");
                         break;
                     }
+                }
+                if (!Input.ReadBool("More Input Demos?", true))
+                {
+                    break;
                 }
             }
 
@@ -79,5 +90,6 @@ namespace Demo.Pages
         ReadEnum,
         MultiChoiceEnum,
         MultiChoiceInt,
+        StringWithDefault,
     }
 }
