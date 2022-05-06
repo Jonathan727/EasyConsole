@@ -78,7 +78,6 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            Output.WriteLine(prompt);
             var menu = new Menu();
 
             var choice = default(TEnum);
@@ -90,6 +89,8 @@ namespace EasyConsole
                     return Task.CompletedTask;
                 });
             }
+
+            Output.WriteLine(prompt);
             await menu.Display();
 
             return choice;
@@ -102,13 +103,14 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            Output.WriteLine(prompt);
             var menu = new MultiChoiceMenu<TEnum>();
 
             foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
             {
                 menu.Add(name, value);
             }
+
+            Output.WriteLine(prompt);
             var choices = menu.Display();
 
             return choices;
