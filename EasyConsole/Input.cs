@@ -1,7 +1,4 @@
-﻿using System;
-using EasyConsole.Types;
-
-namespace EasyConsole
+﻿namespace EasyConsole
 {
     public static class Input
     {

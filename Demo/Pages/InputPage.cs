@@ -1,5 +1,4 @@
 ﻿using EasyConsole;
-using System;
 
 namespace Demo.Pages
 {
