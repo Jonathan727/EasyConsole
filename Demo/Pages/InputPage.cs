@@ -5,11 +5,6 @@ namespace Demo.Pages
 {
     class InputPage : Page
     {
-        private ValueOption<InputDemo>[] InputDemoOptions = new[]
-        {
-            new ValueOption<InputDemo>($"{typeof(Input)}.{nameof(Input.ReadOption)}", InputDemo.ReadOption),
-        };
-
         public InputPage(Program program)
             : base("Input", program)
         {
@@ -20,7 +15,7 @@ namespace Demo.Pages
             await base.Display();
             while (true) //TODO: provide a way to navigate home
             {
-                var demo = await Input.ReadEnum<InputDemo>("Select a demo");
+                var demo = Input.ReadEnum<InputDemo>("Select a demo");
                 Output.WriteLine(ConsoleColor.Green, "You selected {0}", demo);
 
                 switch (demo)
@@ -40,7 +35,7 @@ namespace Demo.Pages
                     }
                     case InputDemo.ReadEnum:
                     {
-                        var input = await Input.ReadEnum<Fruit>("Select a fruit");
+                        var input = Input.ReadEnum<Fruit>("Select a fruit");
                         Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
                         break;
                     }

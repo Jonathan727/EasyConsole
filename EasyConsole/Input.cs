@@ -101,7 +101,7 @@ namespace EasyConsole
             return menu.Display();
         }
 
-        public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
+        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
         {
             if (!typeof(TEnum).IsEnum)
             {
