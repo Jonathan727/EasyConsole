@@ -81,16 +81,8 @@ namespace EasyConsole
             Output.WriteLine(prompt);
             var menu = new Menu();
 
-            var names = Enum.GetNames<TEnum>();
-            var values = Enum.GetValues<TEnum>();
-
-            if (names.Length != values.Length)
-            {
-                throw new ArgumentException($"{nameof(Enum)}.{nameof(Enum.GetNames)}.{nameof(names.Length)} != {nameof(Enum)}.{nameof(Enum.GetValues)}.{nameof(values.Length)}", nameof(TEnum));
-            }
-
             var choice = default(TEnum);
-            foreach (var (name, value) in names.Zip(values))
+            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
             {
                 menu.Add(name, () =>
                 {
@@ -113,6 +105,17 @@ namespace EasyConsole
             Output.WriteLine(prompt);
             var menu = new MultiChoiceMenu<TEnum>();
 
+            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
+            {
+                menu.Add(name, value);
+            }
+            var choices = menu.Display();
+
+            return choices;
+        }
+
+        private static IEnumerable<(string name, TEnum value)> GetEnumNamesAndValues<TEnum>() where TEnum : struct, Enum
+        {
             var names = Enum.GetNames<TEnum>();
             var values = Enum.GetValues<TEnum>();
 
@@ -121,13 +124,7 @@ namespace EasyConsole
                 throw new ArgumentException($"{nameof(Enum)}.{nameof(Enum.GetNames)}.{nameof(names.Length)} != {nameof(Enum)}.{nameof(Enum.GetValues)}.{nameof(values.Length)}", nameof(TEnum));
             }
 
-            foreach (var (name, value) in names.Zip(values))
-            {
-                menu.Add(name, value);
-            }
-            var choices = menu.Display();
-
-            return choices;
+            return names.Zip(values);
         }
     }
 }
