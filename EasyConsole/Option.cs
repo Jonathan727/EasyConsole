@@ -1,17 +1,13 @@
 ﻿namespace EasyConsole
 {
-    public class Option
+    /// <summary>
+    /// An option that performs some task
+    /// </summary>
+    /// <seealso cref="Menu"/>
+    public class Option : ValueOption<Func<Task>>
     {
-        public string Name { get; }
-
-        public Func<Task> Callback { get; }
-
-        public Option(string name, Func<Task> callback)
+        public Option(string name, Func<Task> value) : base(name, value)
         {
-            Name = name;
-            Callback = callback;
         }
-
-        public override string ToString() => Name;
     }
 }

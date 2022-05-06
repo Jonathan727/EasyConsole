@@ -71,6 +71,36 @@ namespace EasyConsole
             return Console.ReadLine();
         }
 
+        public static T ReadOption<T>(IEnumerable<T> values)
+        {
+            var menu = new ValueMenu<T>();
+            var options = values.Select(x => new ValueOption<T>(x?.ToString() ?? "NULL", x));
+            menu.AddRange(options);
+            return menu.Display();
+        }
+
+        public static T ReadOption<T>(IEnumerable<ValueOption<T>> options)
+        {
+            var menu = new ValueMenu<T>();
+            menu.AddRange(options);
+            return menu.Display();
+        }
+
+        public static T? ReadOption<T>(IEnumerable<T?> values) where T : struct
+        {
+            var menu = new ValueMenu<T?>();
+            var options = values.Select(x => new ValueOption<T?>(x.ToString() ?? "NULL", x));
+            menu.AddRange(options);
+            return menu.Display();
+        }
+
+        public static T? ReadOption<T>(IEnumerable<ValueOption<T?>> options) where T : struct
+        {
+            var menu = new ValueMenu<T?>();
+            menu.AddRange(options);
+            return menu.Display();
+        }
+
         public static async Task<TEnum> ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
         {
             if (!typeof(TEnum).IsEnum)
@@ -78,22 +108,15 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var menu = new Menu();
+            var menu = new ValueMenu<TEnum>();
 
-            var choice = default(TEnum);
             foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
             {
-                menu.Add(name, () =>
-                {
-                    choice = value;
-                    return Task.CompletedTask;
-                });
+                menu.Add(name, value);
             }
 
             Output.WriteLine(prompt);
-            await menu.Display();
-
-            return choice;
+            return menu.Display();
         }
 
         public static IReadOnlyCollection<TEnum> ReadMultiChoiceEnum<TEnum>(string prompt) where TEnum : struct, Enum

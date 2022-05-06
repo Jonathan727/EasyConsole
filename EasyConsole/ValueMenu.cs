@@ -1,11 +1,12 @@
 ﻿namespace EasyConsole
 {
     /// <summary>
-    /// Menu where the options perform some asynchronous task
+    /// Menu that returns a <see cref="ValueOption{T}.Value"/> from a selected option
     /// </summary>
-    public class Menu : MenuBase<Func<Task>, Option, Task>
+    /// <typeparam name="T"></typeparam>
+    public class ValueMenu<T> : MenuBase<T, ValueOption<T>, T>
     {
-        public override async Task Display()
+        public override T Display()
         {
             ValidateOptions(true);
 
@@ -15,13 +16,12 @@
             }
 
             var choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
-
-            await Options[choice - 1].Value();
+            return Options[choice - 1].Value;
         }
 
-        public Menu Add(string name, Func<Task> callback)
+        public ValueMenu<T> Add(string name, T value)
         {
-            Add(new Option(name, callback));
+            Add(new ValueOption<T>(name, value));
             return this;
         }
     }
