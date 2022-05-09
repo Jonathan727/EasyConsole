@@ -39,6 +39,12 @@ namespace Demo.Pages
                         Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
                         break;
                     }
+                    case InputDemo.ReadEnumWithDefault:
+                    {
+                        var input = Input.ReadEnumWithDefault<Fruit>("Select a fruit", Fruit.Banana);
+                        Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
+                        break;
+                    }
                     case InputDemo.MultiChoiceEnum:
                     {
                         var input = Input.ReadMultiChoiceEnum<Fruit>("Select multiple fruits");
@@ -82,12 +88,14 @@ namespace Demo.Pages
         Apple,
         Banana,
         Coconut,
+        Grape,
     }
 
     enum InputDemo
     {
         ReadOption,
         ReadEnum,
+        ReadEnumWithDefault,
         MultiChoiceEnum,
         MultiChoiceInt,
         StringWithDefault,
