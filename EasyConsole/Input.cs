@@ -427,6 +427,24 @@ namespace EasyConsole
             return menu.Display();
         }
 
+        public static TEnum ReadEnumWithDefault<TEnum>(string prompt, TEnum @default) where TEnum : struct, Enum
+        {
+            if (!typeof(TEnum).IsEnum)
+            {
+                throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
+            }
+
+            var menu = new MenuWithDefault<TEnum>(prompt, Enum.GetName(@default) ?? @default.ToString(), @default);
+
+            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
+            {
+                menu.Add(name, value);
+            }
+
+            Output.WriteLine(prompt);
+            return menu.Display();
+        }
+
         public static IReadOnlyCollection<TEnum> ReadMultiChoiceEnum<TEnum>(string prompt) where TEnum : struct, Enum
         {
             if (!typeof(TEnum).IsEnum)
