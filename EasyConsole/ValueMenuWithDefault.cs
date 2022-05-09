@@ -1,17 +1,17 @@
 ﻿namespace EasyConsole
 {
-    public class MenuWithDefault<T> : ValueMenu<T>
+    public class ValueMenuWithDefault<T> : ValueMenu<T>
     {
         private readonly string _prompt;
         private const int DefaultOptionIndex = 0;
 
         private ValueOption<T> DefaultOption => Options[DefaultOptionIndex];
 
-        public MenuWithDefault(string prompt, string defaultOption, T @default) : this(prompt, new ValueOption<T>(defaultOption, @default))
+        public ValueMenuWithDefault(string prompt, string defaultOption, T @default) : this(prompt, new ValueOption<T>(defaultOption, @default))
         {
         }
 
-        public MenuWithDefault(string prompt, ValueOption<T> defaultOption)
+        public ValueMenuWithDefault(string prompt, ValueOption<T> defaultOption)
         {
             _prompt = prompt.Trim();
             Add(defaultOption);

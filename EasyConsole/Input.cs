@@ -434,7 +434,7 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var menu = new MenuWithDefault<TEnum>(prompt, Enum.GetName(@default) ?? @default.ToString(), @default);
+            var menu = new ValueMenuWithDefault<TEnum>(prompt, Enum.GetName(@default) ?? @default.ToString(), @default);
 
             foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
             {
