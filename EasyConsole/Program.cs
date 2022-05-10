@@ -35,7 +35,24 @@ namespace EasyConsole
                     throw new NullReferenceException("CurrentPage is null");
                 }
 
-                await CurrentPage.Display();
+                while (true)
+                {
+                    try
+                    {
+                        await CurrentPage.Display();
+                    }
+                    catch (UserInputCanceledException)
+                    {
+                        //go back if history exists
+                        if (History.Count > 1)
+                        {
+                            History.Pop();
+                        }
+                        Console.Clear();
+                        continue;
+                    }
+                    break;
+                }
             }
             catch (Exception e)
             {

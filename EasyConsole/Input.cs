@@ -40,7 +40,7 @@ namespace EasyConsole
                 var input = Console.ReadLine();
                 if (input == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
 
                 if (int.TryParse(input, out var value))
@@ -80,7 +80,7 @@ namespace EasyConsole
                 var userInput = Console.ReadLine();
                 if (userInput == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
@@ -109,7 +109,7 @@ namespace EasyConsole
                 var userInput = Console.ReadLine();
                 if (userInput == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
@@ -138,7 +138,7 @@ namespace EasyConsole
                 var userInput = Console.ReadLine();
                 if (userInput == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
 
                 var values = userInput.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -156,10 +156,16 @@ namespace EasyConsole
 
         #region String
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns><see langword="null" /> if <kbd>Ctrl+Z</kbd> (followed by <kbd>Enter</kbd> on Windows) is pressed when the method is reading input from the console</returns>
+        /// <exception cref="UserInputCanceledException"></exception>
         public static string ReadString(string prompt)
         {
             Output.DisplayPrompt(prompt);
-            return Console.ReadLine() ?? throw new InvalidOperationException("Read null Console.ReadLine()");
+            return Console.ReadLine() ?? throw new UserInputCanceledException();
         }
 
         /// <summary>
@@ -168,7 +174,7 @@ namespace EasyConsole
         /// <param name="prompt"></param>
         /// <param name="default">A single line string to use as default. If <see langword="null" />, then this parameter is ignored and the behavior is the same as <see cref="ReadString(string)"/></param>
         /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="UserInputCanceledException"></exception>
         public static string ReadStringWithDefault(string prompt, string? @default)
         {
             if (string.IsNullOrWhiteSpace(@default))
@@ -179,7 +185,7 @@ namespace EasyConsole
             var sanitized = new string(@default.Where(c => char.IsLetterOrDigit(c) || char.IsPunctuation(c) || ' ' == c).ToArray());
             Output.DisplayPrompt(prompt);
             var result = ReadLineWithDefaultText(sanitized);
-            return result ?? throw new InvalidOperationException("Read null Console.ReadLine()");
+            return result ?? throw new UserInputCanceledException();
         }
 
         private static string? ReadLineWithDefaultText(string @default)
@@ -261,8 +267,7 @@ namespace EasyConsole
         {
             if (s == null)
             {
-                result = @default;
-                return false;
+                throw new UserInputCanceledException();
             }
 
             if (string.IsNullOrEmpty(s))
@@ -298,7 +303,7 @@ namespace EasyConsole
                 var userInput = ReadString($"{prompt} [{@default:o}]:");
                 if (userInput == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
@@ -321,7 +326,7 @@ namespace EasyConsole
                 var userInput = ReadString($"{prompt} [{@default:o}]:");
                 if (userInput == null)
                 {
-                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                    throw new UserInputCanceledException();
                 }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
@@ -364,8 +369,7 @@ namespace EasyConsole
         {
             if (userInput == null)
             {
-                result = @default;
-                return false;
+                throw new UserInputCanceledException();
             }
 
 
