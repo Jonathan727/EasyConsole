@@ -1,4 +1,4 @@
-﻿namespace EasyConsole.Menu
+﻿namespace EasyConsole
 {
     /// <summary>
     /// Menu that returns a <see cref="ValueOption{T}.Value"/> from a selected selection

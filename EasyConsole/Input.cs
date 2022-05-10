@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using EasyConsole.Menu;
 using EasyConsole.Types;
 
 namespace EasyConsole

@@ -1,4 +1,4 @@
-﻿namespace EasyConsole.Menu
+﻿namespace EasyConsole
 {
 
     public class ValueOption<T>
