@@ -1,6 +1,13 @@
 ﻿namespace EasyConsole
 {
-    public abstract class MenuBase<TValue, TOption, TChoice, TReturn> where TOption : ValueOption<TValue>
+    /// <summary>
+    /// Generic base class for a menu that shows the user a list of options and processes the user's selection
+    /// </summary>
+    /// <typeparam name="TValue">The type of <see cref="ValueOption{T}.Value"/> in each element of <see cref="Options"/></typeparam>
+    /// <typeparam name="TOption">A <see cref="ValueOption{T}"/> containing <typeparamref name="TValue"/></typeparam>
+    /// <typeparam name="TSelection">The type returned by <see cref="DisplayPrompt"/> indicating user's choice(s). Could for example be as single <typeparamref name="TSelection"/> or an <see cref="IEnumerable{T}"/> of <typeparamref name="TSelection"/>. The result is handled by <see cref="OnUserAnsweredPrompt"/></typeparam>
+    /// <typeparam name="TReturn">The type that will be returned by <see cref="OnUserAnsweredPrompt"/> and <see cref="Display"/></typeparam>
+    public abstract class MenuBase<TValue, TOption, TSelection, TReturn> where TOption : ValueOption<TValue>
     {
         protected List<TOption> Options { get; } = new();
         protected bool AllowNullOptionValues { get; }
@@ -18,7 +25,7 @@
 
             var chosenOption = DisplayPrompt();
 
-            return OnOptionChosen(chosenOption);
+            return OnUserAnsweredPrompt(chosenOption);
         }
 
         protected void ValidateOptions(bool checkForNull)
@@ -41,17 +48,26 @@
             }
         }
 
-        protected abstract TChoice DisplayPrompt();
+        /// <summary>
+        /// Print the prompt message and return the user's selection.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract TSelection DisplayPrompt();
 
-        protected abstract TReturn OnOptionChosen(TChoice option);
+        /// <summary>
+        /// Called when the user has answered the prompt from <see cref="DisplayPrompt"/>. Use this method to process the selection into the return type, <typeparamref name="TReturn"/>.
+        /// </summary>
+        /// <param name="selection">The selection made by the user.</param>
+        /// <returns></returns>
+        protected abstract TReturn OnUserAnsweredPrompt(TSelection selection);
 
-        public MenuBase<TValue, TOption, TChoice, TReturn> Add(TOption option)
+        public MenuBase<TValue, TOption, TSelection, TReturn> Add(TOption option)
         {
             Options.Add(option);
             return this;
         }
 
-        public MenuBase<TValue, TOption, TChoice, TReturn> AddRange(IEnumerable<TOption> options)
+        public MenuBase<TValue, TOption, TSelection, TReturn> AddRange(IEnumerable<TOption> options)
         {
             Options.AddRange(options);
             return this;

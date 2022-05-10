@@ -6,9 +6,9 @@
     /// <typeparam name="T"></typeparam>
     public class MultiChoiceMenu<T> : MultiChoiceMenuBase<T, ValueOption<T>, IReadOnlyCollection<T>>
     {
-        protected override IReadOnlyCollection<T> OnOptionChosen(IEnumerable<ValueOption<T>> option)
+        protected override IReadOnlyCollection<T> OnUserAnsweredPrompt(IEnumerable<ValueOption<T>> selection)
         {
-            return option.Select(x => x.Value).ToList();
+            return selection.Select(x => x.Value).ToList();
         }
 
         public MultiChoiceMenu<T> Add(string name, T value)
