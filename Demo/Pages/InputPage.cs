@@ -60,6 +60,12 @@ namespace Demo.Pages
                         Output.WriteLine(ConsoleColor.Green, $"You selected {string.Join("; ", choices.Select(x => $"{x:n0}"))}");
                         break;
                     }
+                    case InputDemo.String:
+                    {
+                        FavoritePlace = Input.ReadString("What is your favorite place?");
+                        Output.WriteLine(ConsoleColor.Green, $"Your favorite place is '{FavoritePlace}'");
+                        break;
+                    }
                     case InputDemo.StringWithDefault:
                     {
                         FavoritePlace = Input.ReadStringWithDefault("What is your favorite place?", FavoritePlace);
@@ -98,6 +104,7 @@ namespace Demo.Pages
         ReadEnumWithDefault,
         MultiChoiceEnum,
         MultiChoiceInt,
+        String,
         StringWithDefault,
     }
 }
