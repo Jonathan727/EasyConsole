@@ -15,62 +15,73 @@ namespace EasyConsole
 
         public static int ReadInt(int min, int max)
         {
-            var value = ReadInt();
-
-            while (value < min || value > max)
+            if (min > max)
             {
-                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive):", min, max);
-                value = ReadInt();
+                throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
             }
 
-            return value;
+            while (true) // Loop indefinitely
+            {
+                var value = ReadInt();
+
+                if (value >= min && value <= max)
+                {
+                    return value;
+                }
+
+                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive):", min, max);
+            }
         }
 
         public static int ReadInt()
         {
-            var input = Console.ReadLine();
-            int value;
-
-            while (!int.TryParse(input, out value))
+            while (true) // Loop indefinitely
             {
-                Output.DisplayPrompt("Please enter an integer");
-                input = Console.ReadLine();
-            }
+                var input = Console.ReadLine();
+                if (input == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
 
-            return value;
+                if (int.TryParse(input, out var value))
+                {
+                    return value;
+                }
+
+                Output.DisplayPrompt("Please enter an integer");
+            }
         }
 
         internal static int ReadIntDoNotAppendDefaultToPrompt(string prompt, int min, int max, int @default)
         {
-            if (@default > max || @default < min)
-            {
-                throw new ArgumentOutOfRangeException(nameof(@default), @default, "default value given is outside of range");
-            }
             Output.DisplayPrompt(prompt);
             return ReadInt(min, max, @default);
         }
 
         public static int ReadInt(string prompt, int min, int max, int @default)
         {
-            if (@default > max || @default < min)
-            {
-                throw new ArgumentOutOfRangeException(nameof(@default), @default, "default value given is outside of range");
-            }
-
             Output.DisplayPrompt($"{prompt} [{@default}]:");
             return ReadInt(min, max, @default);
         }
 
         private static int ReadInt(int min, int max, int @default)
         {
+            if (min > max)
+            {
+                throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
+            }
             if (@default > max || @default < min)
             {
-                throw new ArgumentOutOfRangeException(nameof(@default), @default, "default value given is outside of range");
+                throw new ArgumentOutOfRangeException(nameof(@default), @default, "default value given is outside of range. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
             }
 
             while (true) // Loop indefinitely
             {
                 var userInput = Console.ReadLine();
+                if (userInput == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
                     return @default;
@@ -96,6 +107,10 @@ namespace EasyConsole
             while (true) // Loop indefinitely
             {
                 var userInput = Console.ReadLine();
+                if (userInput == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
                     return @default;
@@ -141,26 +156,33 @@ namespace EasyConsole
 
         #region String
 
-        public static string? ReadString(string prompt)
+        public static string ReadString(string prompt)
         {
             Output.DisplayPrompt(prompt);
-            return Console.ReadLine();
+            return Console.ReadLine() ?? throw new InvalidOperationException("Read null Console.ReadLine()");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="default">A single line string to use as default. If <see langword="null" />, then this parameter is ignored and the behavior is the same as <see cref="ReadString(string)"/></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public static string ReadStringWithDefault(string prompt, string? @default)
         {
             if (string.IsNullOrWhiteSpace(@default))
             {
-                return Input.ReadString($"{prompt}:") ?? throw new InvalidOperationException();
+                return ReadString(prompt);
             }
 
             var sanitized = new string(@default.Where(c => char.IsLetterOrDigit(c) || char.IsPunctuation(c) || ' ' == c).ToArray());
-            Output.DisplayPrompt($"{prompt}:");
+            Output.DisplayPrompt(prompt);
             var result = ReadLineWithDefaultText(sanitized);
-            return result;
+            return result ?? throw new InvalidOperationException("Read null Console.ReadLine()");
         }
 
-        private static string ReadLineWithDefaultText(string @default)
+        private static string? ReadLineWithDefaultText(string @default)
         {
             var initialCursorLeft = Console.CursorLeft;
             Console.Write(@default);
@@ -198,16 +220,20 @@ namespace EasyConsole
                 else if (info.Key == ConsoleKey.Enter)
                 {
                     Console.Write(Environment.NewLine);
-                    break;
+                    return new string(chars.ToArray());
                 }
-                //Here you need create own checking of symbols
+                //CTRL+Z + <enter> would normally cause Console.ReadLine() to return null. Do the in this method.
+                else if (info.Key == ConsoleKey.Z && info.Modifiers == ConsoleModifiers.Control)
+                {
+                    return null;
+                }
+                //Check if the character is allowed
                 else if (char.IsLetterOrDigit(info.KeyChar) || char.IsPunctuation(info.KeyChar))
                 {
                     Console.Write(info.KeyChar);
                     chars.Add(info.KeyChar);
                 }
             }
-            return new string(chars.ToArray());
         }
 
         #endregion
@@ -218,9 +244,9 @@ namespace EasyConsole
         {
             bool result;
 
-            string? ReadStringLocal()
+            string ReadStringLocal()
             {
-                return Input.ReadString(@default ? $"{prompt} ([yes]/no):" : $"{prompt} ([no]/yes):");
+                return ReadString(@default ? $"{prompt} ([yes]/no):" : $"{prompt} ([no]/yes):");
             }
 
             for (var s = ReadStringLocal(); !TryParseBool(s, @default, out result); s = ReadStringLocal())
@@ -235,7 +261,7 @@ namespace EasyConsole
         {
             if (s == null)
             {
-                result = default;
+                result = @default;
                 return false;
             }
 
@@ -257,7 +283,7 @@ namespace EasyConsole
                 return true;
             }
 
-            result = default;
+            result = @default;
             return false;
         }
 
@@ -267,55 +293,61 @@ namespace EasyConsole
 
         public static DateTime ReadDateTime(string prompt, DateTime @default)
         {
-            DateTime dateTime;
             while (true) // Loop indefinitely
             {
-                var userInput = Input.ReadString($"{prompt} [{@default:o}]:");
+                var userInput = ReadString($"{prompt} [{@default:o}]:");
+                if (userInput == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
-                    dateTime = @default;
-                    break;
+                    return @default;
                 }
 
-                if (DateTime.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out dateTime))
+                if (DateTime.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime))
                 {
-                    break;
+                    return dateTime;
                 }
 
                 Output.WriteLine("Invalid Input");
             }
-
-            return dateTime;
         }
 
         public static DateTimeOffset ReadDateTime(string prompt, DateTimeOffset @default)
         {
-            DateTimeOffset dateTime;
             while (true) // Loop indefinitely
             {
-                var userInput = Input.ReadString($"{prompt} [{@default:o}]:");
+                var userInput = ReadString($"{prompt} [{@default:o}]:");
+                if (userInput == null)
+                {
+                    throw new InvalidOperationException("Read null from Console.ReadLine()");
+                }
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
-                    dateTime = @default;
-                    break;
+                    return @default;
                 }
 
-                if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out dateTime))
+                if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime))
                 {
-                    break;
+                    return dateTime;
                 }
 
                 Output.WriteLine("Invalid Input");
             }
-
-            return dateTime;
         }
 
+        /// <summary>
+        /// Prompts user for a date time. If the user enters 'no/none/null' this method returns <see langword="null"/>.
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="default">Default value to return when pressed enter without typing anything</param>
+        /// <returns></returns>
         public static DateTimeOffset? ReadDateTimeNullable(string prompt, DateTimeOffset? @default)
         {
-            string? ReadStringLocal()
+            string ReadStringLocal()
             {
-                return Input.ReadString(@default.HasValue ? $"{prompt} ([{@default:o}]/no/none/null):" : $"{prompt} ([no/none/null]/date):");
+                return ReadString(@default.HasValue ? $"{prompt} ([{@default:o}]/no/none/null):" : $"{prompt} ([no/none/null]/date):");
             }
 
             DateTimeOffset? result;
@@ -353,7 +385,7 @@ namespace EasyConsole
                 var fullPrompt = @default.HasValue
                     ? $"What date/time?[{@default:o}]:"
                     : "What date/time?:";
-                var userInput2 = Input.ReadString(fullPrompt);
+                var userInput2 = ReadString(fullPrompt);
                 if (string.IsNullOrEmpty(userInput2))
                 {
                     //This is valid iff there is only a default value (user already specified that they don't intend to enter null/none)
@@ -368,7 +400,7 @@ namespace EasyConsole
                     return false;
                 }
 
-                if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime2))
+                if (DateTimeOffset.TryParse(userInput2, null, DateTimeStyles.AssumeUniversal, out var dateTime2))
                 {
                     result = dateTime2;
                     return true;
@@ -446,7 +478,7 @@ namespace EasyConsole
             return menu.Display();
         }
 
-        public static TEnum ReadEnumWithDefault<TEnum>(string prompt, TEnum @default) where TEnum : struct, Enum
+        public static TEnum ReadEnum<TEnum>(string prompt, TEnum @default) where TEnum : struct, Enum
         {
             if (!typeof(TEnum).IsEnum)
             {

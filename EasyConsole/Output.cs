@@ -21,6 +21,9 @@
             Console.WriteLine(format, args);
         }
 
+        /// <summary>
+        /// Displays a prompt message to the user, trimming whitespace and appending ': '
+        /// </summary>
         public static void DisplayPrompt(string format, params object[] args)
         {
             const string promptEnd = ": ";

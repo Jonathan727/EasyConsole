@@ -41,7 +41,7 @@ namespace Demo.Pages
                     }
                     case InputDemo.ReadEnumWithDefault:
                     {
-                        var input = Input.ReadEnumWithDefault<Fruit>("Select a fruit", Fruit.Banana);
+                        var input = Input.ReadEnum("Select a fruit", Fruit.Banana);
                         Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
                         break;
                     }
