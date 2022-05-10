@@ -1,4 +1,4 @@
-﻿namespace EasyConsole
+﻿namespace EasyConsole.Menu
 {
     /// <summary>
     /// Menu where the options perform some asynchronous task

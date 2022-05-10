@@ -1,6 +1,6 @@
 ﻿using EasyConsole.Types;
 
-namespace EasyConsole
+namespace EasyConsole.Menu
 {
     /// <summary>
     /// Generic base class for a menu that shows the user a list of options and processes the user's selection

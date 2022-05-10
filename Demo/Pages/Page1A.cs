@@ -1,4 +1,5 @@
 ﻿using EasyConsole;
+using EasyConsole.Menu;
 
 namespace Demo.Pages
 {

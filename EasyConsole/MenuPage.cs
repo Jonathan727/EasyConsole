@@ -1,12 +1,14 @@
-﻿namespace EasyConsole
+﻿using EasyConsole.Menu;
+
+namespace EasyConsole
 {
     public abstract class MenuPage : Page
     {
-        protected Menu Menu { get; set; }
+        protected Menu.Menu Menu { get; set; }
 
         protected MenuPage(string title, Program program, params Option[] options) : base(title, program)
         {
-            Menu = new Menu();
+            Menu = new Menu.Menu();
             Menu.AddRange(options);
         }
 

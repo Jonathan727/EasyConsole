@@ -1,4 +1,4 @@
-﻿namespace EasyConsole
+﻿namespace EasyConsole.Menu
 {
     public class ActionMenuWithDefault : Menu
     {
@@ -23,9 +23,8 @@
 
         protected override Option DisplayPrompt()
         {
-            var choice = Input.ReadIntDoNotAppendDefaultToPrompt($"{_prompt}  [{DefaultOptionIndex + 1}. {DefaultOption.Name}]:", min: 1, max: Options.Count, DefaultOptionIndex + 1);
-            var chosenOption = Options[choice - 1];
-            return chosenOption;
+            var choice = Input.ReadIntDoNotAppendDefaultToPrompt($"{_prompt}  [{DefaultOptionIndex + 1}. {DefaultOption.Name}]", GetOptionRange(), DefaultOptionIndex + 1);
+            return GetOption(choice);
         }
     }
 }

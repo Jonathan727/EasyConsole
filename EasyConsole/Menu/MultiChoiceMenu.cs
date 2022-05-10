@@ -1,4 +1,4 @@
-﻿namespace EasyConsole
+﻿namespace EasyConsole.Menu
 {
     /// <summary>
     /// Similar to <see cref="ValueMenu{T}"/>, but allows multiple choices
