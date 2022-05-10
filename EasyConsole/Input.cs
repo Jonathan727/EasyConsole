@@ -4,6 +4,9 @@ namespace EasyConsole
 {
     public static class Input
     {
+
+        #region Int
+
         public static int ReadInt(string prompt, int min, int max)
         {
             Output.DisplayPrompt(prompt);
@@ -134,6 +137,10 @@ namespace EasyConsole
             }
         }
 
+        #endregion
+
+        #region String
+
         public static string? ReadString(string prompt)
         {
             Output.DisplayPrompt(prompt);
@@ -203,6 +210,10 @@ namespace EasyConsole
             return new string(chars.ToArray());
         }
 
+        #endregion
+
+        #region Bool
+
         public static bool ReadBool(string prompt, bool @default)
         {
             bool result;
@@ -249,6 +260,10 @@ namespace EasyConsole
             result = default;
             return false;
         }
+
+        #endregion
+
+        #region DateTime[Offset]
 
         public static DateTime ReadDateTime(string prompt, DateTime @default)
         {
@@ -379,12 +394,14 @@ namespace EasyConsole
             return false;
         }
 
+        #endregion
+
+        #region Generic Options
+
         public static T ReadOption<T>(IEnumerable<T> values)
         {
-            var menu = new ValueMenu<T>();
             var options = values.Select(x => new ValueOption<T>(x?.ToString() ?? "NULL", x));
-            menu.AddRange(options);
-            return menu.Display();
+            return ReadOption(options);
         }
 
         public static T ReadOption<T>(IEnumerable<ValueOption<T>> options)
@@ -396,10 +413,8 @@ namespace EasyConsole
 
         public static T? ReadOption<T>(IEnumerable<T?> values) where T : struct
         {
-            var menu = new ValueMenu<T?>();
             var options = values.Select(x => new ValueOption<T?>(x.ToString() ?? "NULL", x));
-            menu.AddRange(options);
-            return menu.Display();
+            return ReadOption(options);
         }
 
         public static T? ReadOption<T>(IEnumerable<ValueOption<T?>> options) where T : struct
@@ -408,6 +423,10 @@ namespace EasyConsole
             menu.AddRange(options);
             return menu.Display();
         }
+
+        #endregion
+
+        #region Enum
 
         public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
         {
@@ -477,5 +496,7 @@ namespace EasyConsole
 
             return names.Zip(values);
         }
+
+        #endregion
     }
 }
