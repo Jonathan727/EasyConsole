@@ -166,7 +166,13 @@ namespace EasyConsole
             return ReadMultiChoiceInt(new IntRange(min, max));
         }
 
-        public static IReadOnlyCollection<int> ReadMultiChoiceInt(IntRange range)
+        public static IReadOnlyCollection<int> ReadMultiChoiceInt(string prompt, IntRange range)
+        {
+            Output.DisplayPrompt(prompt);
+            return ReadMultiChoiceInt(range);
+        }
+
+        private static IReadOnlyCollection<int> ReadMultiChoiceInt(IntRange range)
         {
             while (true) // Loop indefinitely
             {
