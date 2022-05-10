@@ -1,4 +1,6 @@
-﻿namespace EasyConsole
+﻿using EasyConsole.Types;
+
+namespace EasyConsole
 {
     /// <summary>
     /// Generic base class for a menu that shows the user a list of options and processes the user's selection
@@ -60,6 +62,32 @@
         /// <param name="selection">The selection made by the user.</param>
         /// <returns></returns>
         protected abstract TReturn OnUserAnsweredPrompt(TSelection selection);
+
+        /// <summary>
+        /// Getter that translates 1-indexed option numbers to the zero-indexed <see cref="Options"/> list
+        /// </summary>
+        /// <param name="optionNumber"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        protected TOption GetOption(int optionNumber)
+        {
+            if (optionNumber > Options.Count || optionNumber < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(optionNumber));
+            }
+
+            return Options[optionNumber - 1];
+        }
+
+        protected IntRange GetOptionRange()
+        {
+            if (!Options.Any())
+            {
+                throw new InvalidOperationException($"No items in {nameof(Options)}.");
+            }
+
+            return new IntRange(1, Options.Count);
+        }
 
         public MenuBase<TValue, TOption, TSelection, TReturn> Add(TOption option)
         {
