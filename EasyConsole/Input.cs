@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using EasyConsole.Types;
 
 namespace EasyConsole
 {
@@ -19,17 +20,27 @@ namespace EasyConsole
             {
                 throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
             }
+            return ReadInt(new IntRange(min, max));
+        }
 
+        public static int ReadInt(string prompt, IntRange range)
+        {
+            Output.DisplayPrompt(prompt);
+            return ReadInt(range.Min, range.Max);
+        }
+
+        public static int ReadInt(IntRange range)
+        {
             while (true) // Loop indefinitely
             {
                 var value = ReadInt();
 
-                if (value >= min && value <= max)
+                if (range.IsInside(value))
                 {
                     return value;
                 }
 
-                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive):", min, max);
+                Output.DisplayPrompt("Please enter an integer between {0} and {1} (inclusive):", range.Min, range.Max);
             }
         }
 
@@ -54,25 +65,40 @@ namespace EasyConsole
 
         internal static int ReadIntDoNotAppendDefaultToPrompt(string prompt, int min, int max, int @default)
         {
+            if (min > max)
+            {
+                throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
+            }
+            return ReadIntDoNotAppendDefaultToPrompt(prompt, new IntRange(min, max), @default);
+        }
+
+        internal static int ReadIntDoNotAppendDefaultToPrompt(string prompt, IntRange range, int @default)
+        {
             Output.DisplayPrompt(prompt);
-            return ReadInt(min, max, @default);
+            return ReadInt(range, @default);
         }
 
         public static int ReadInt(string prompt, int min, int max, int @default)
-        {
-            Output.DisplayPrompt($"{prompt} [{@default}]:");
-            return ReadInt(min, max, @default);
-        }
-
-        private static int ReadInt(int min, int max, int @default)
         {
             if (min > max)
             {
                 throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
             }
-            if (@default > max || @default < min)
+            Output.DisplayPrompt($"{prompt} [{@default}]:");
+            return ReadInt(new IntRange(min, max), @default);
+        }
+
+        public static int ReadInt(string prompt, IntRange range, int @default)
+        {
+            Output.DisplayPrompt($"{prompt} [{@default}]:");
+            return ReadInt(range, @default);
+        }
+
+        private static int ReadInt(IntRange range, int @default)
+        {
+            if (range.IsOutside(@default))
             {
-                throw new ArgumentOutOfRangeException(nameof(@default), @default, "default value given is outside of range. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
+                throw new ArgumentOutOfRangeException(nameof(@default), @default, $"default value given is outside of range. {nameof(range)} was {range}");
             }
 
             while (true) // Loop indefinitely
@@ -87,12 +113,12 @@ namespace EasyConsole
                     return @default;
                 }
 
-                if (int.TryParse(userInput, out var result) && result >= min && result <= max)
+                if (int.TryParse(userInput, out var result) && range.IsInside(result))
                 {
                     return result;
                 }
 
-                Output.DisplayPrompt($"Please enter an integer between {min} and {max} (inclusive) [{@default}]:");
+                Output.DisplayPrompt($"Please enter an integer between {range.Min} and {range.Max} (inclusive) [{@default}]:");
             }
         }
 
@@ -133,6 +159,15 @@ namespace EasyConsole
 
         public static IReadOnlyCollection<int> ReadMultiChoiceInt(int min, int max)
         {
+            if (min > max)
+            {
+                throw new ArgumentException($"{nameof(min)} must be <= {nameof(max)}. {nameof(min)} was {min:N0}; {nameof(max)} was {max:N0}");
+            }
+            return ReadMultiChoiceInt(new IntRange(min, max));
+        }
+
+        public static IReadOnlyCollection<int> ReadMultiChoiceInt(IntRange range)
+        {
             while (true) // Loop indefinitely
             {
                 var userInput = Console.ReadLine();
@@ -143,12 +178,12 @@ namespace EasyConsole
 
                 var values = userInput.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                 var results = Array.ConvertAll(values, s => int.TryParse(s, out var i) ? (int?)i : null);
-                if (results.Any() && !results.Any(x => x is null || x < min || x > max))
+                if (results.Any() && results.All(x => x is not null && range.IsInside(x.Value)))
                 {
                     return Array.ConvertAll(results, x => x!.Value);
                 }
 
-                Output.DisplayPrompt($"Please enter a comma delimited list of integers between {min} and {max} (inclusive):");
+                Output.DisplayPrompt($"Please enter a comma delimited list of integers between {range.Min} and {range.Max} (inclusive):");
             }
         }
 

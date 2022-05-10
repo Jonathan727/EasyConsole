@@ -28,6 +28,11 @@
             return x >= Min && x <= Max;
         }
 
+        public bool IsOutside(int x)
+        {
+            return !IsInside(x);
+        }
+
         public bool IsInside(IntRange range)
         {
             return IsInside(range.Min) && IsInside(range.Max);
