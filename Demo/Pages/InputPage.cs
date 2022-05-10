@@ -5,8 +5,8 @@ namespace Demo.Pages
     class InputPage : Page
     {
         public string? FavoritePlace { get; set; } = "Home";
-        public InputPage(Program program)
-            : base("Input", program)
+
+        public InputPage(Program program) : base("Input", program)
         {
         }
 
@@ -78,6 +78,7 @@ namespace Demo.Pages
                         break;
                     }
                 }
+
                 if (!Input.ReadBool("More Input Demos?", true))
                 {
                     break;

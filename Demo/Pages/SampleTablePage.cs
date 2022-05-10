@@ -4,8 +4,7 @@ namespace Demo.Pages;
 
 internal class SampleTablePage : Page
 {
-    public SampleTablePage(Program program)
-        : base("Input", program)
+    public SampleTablePage(Program program) : base("Input", program)
     {
     }
 

@@ -4,8 +4,7 @@ namespace Demo.Pages
 {
     class Page1Ai : Page
     {
-        public Page1Ai(Program program)
-            : base("Page 1Ai", program)
+        public Page1Ai(Program program) : base("Page 1Ai", program)
         {
         }
 
