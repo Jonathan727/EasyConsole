@@ -7,20 +7,17 @@
         protected MenuPage(string title, Program program, params Option[] options) : base(title, program)
         {
             Menu = new Menu();
-
-            foreach (var option in options)
-            {
-                Menu.Add(option);
-            }
+            Menu.AddRange(options);
         }
 
         public override async Task Display()
         {
             await base.Display();
 
-            if (Program.NavigationEnabled && !Menu.Contains("Go back"))
+            const string goBackOption = "Go back";
+            if (Program.NavigationEnabled && !Menu.Contains(goBackOption))
             {
-                Menu.Add("Go back", () => Program.NavigateBack());
+                Menu.Add(goBackOption, () => Program.NavigateBack());
             }
 
             await Menu.Display();
