@@ -1,30 +1,24 @@
 ﻿namespace EasyConsole
 {
-    public class ActionMenuWithDefault : Menu
+    public class ActionMenuWithDefault : SingleChoiceMenuWithDefault<Func<Task>, Option, Task>
     {
-        private readonly string _prompt;
-        private const int DefaultOptionIndex = 0;
-
-        private Option DefaultOption => Options[DefaultOptionIndex];
-
         public ActionMenuWithDefault(string prompt, string defaultOption, Func<Task> @default) : this(prompt, new Option(defaultOption, @default))
         {
         }
 
-        public ActionMenuWithDefault(string prompt, Option defaultOption)
+        public ActionMenuWithDefault(string prompt, Option defaultOption) : base(prompt, defaultOption)
         {
-            _prompt = prompt.Trim();
-            Add(defaultOption);
-            if (Options.Count != 1)
-            {
-                throw new InvalidOperationException($"Expected {nameof(Options)} to have only one option after adding the default");
-            }
         }
 
-        protected override Option DisplayPrompt()
+        protected override async Task OnUserAnsweredPrompt(Option selection)
         {
-            var choice = Input.ReadIntDoNotAppendDefaultToPrompt($"{_prompt}  [{DefaultOptionIndex + 1}. {DefaultOption.Name}]", GetOptionRange(), DefaultOptionIndex + 1);
-            return GetOption(choice);
+            await selection.Value();
+        }
+
+        public ActionMenuWithDefault Add(string name, Func<Task> callback)
+        {
+            Add(new Option(name, callback));
+            return this;
         }
     }
 }
