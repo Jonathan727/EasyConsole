@@ -13,9 +13,28 @@ namespace EasyConsole
     {
         protected List<TOption> Options { get; } = new();
         protected bool AllowNullOptionValues { get; }
-
-        protected MenuBase(bool allowNullOptionValues = false)
+        protected TOption? DefaultOption { get; }
+        protected bool HasDefaultOption => DefaultOption != null;
+        protected int DefaultOptionNumber
         {
+            get
+            {
+                var defaultOptionIndex = DefaultOption != null ? Options.IndexOf(DefaultOption) : throw new InvalidOperationException("No Default Option");
+                if (defaultOptionIndex == -1)
+                {
+                    throw new InvalidOperationException($"{nameof(DefaultOption)} not found in {nameof(Options)}");
+                }
+                return defaultOptionIndex + 1;
+            }
+        }
+
+        protected MenuBase(TOption? defaultOption = null, bool allowNullOptionValues = false)
+        {
+            if (defaultOption != null)
+            {
+                DefaultOption = defaultOption;
+                Options.Add(defaultOption);
+            }
             AllowNullOptionValues = allowNullOptionValues;
         }
 
@@ -39,6 +58,10 @@ namespace EasyConsole
             if (checkForNull && Options.Any(x => x.Value is null))
             {
                 throw new InvalidOperationException($"{typeof(TOption)}.{nameof(ValueOption<TValue>.Value)} was null or is not set in one or more {nameof(Options)}");
+            }
+            if (HasDefaultOption && !Options.Contains(DefaultOption))
+            {
+                throw new InvalidOperationException($"{nameof(DefaultOption)} not found in {nameof(Options)}");
             }
         }
 
