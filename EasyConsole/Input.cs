@@ -606,9 +606,14 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value));
-            var menu = new MultiChoiceMenu<TEnum>(null, Enum.GetName(@default) ?? @default.ToString(), @default);
-            menu.AddRange(options);
+            var options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList();
+            var defaultOption = options.FirstOrDefault(x => x.Value.Equals(@default)) ?? throw new InvalidOperationException();
+            var menu = new MultiChoiceMenu<TEnum>
+            {
+                PromptText = prompt,
+                DefaultOption = defaultOption,
+                Options = options,
+            };
 
             Output.WriteLine(prompt);
             return menu.Display();

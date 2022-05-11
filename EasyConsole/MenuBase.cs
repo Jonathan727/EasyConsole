@@ -20,8 +20,9 @@ namespace EasyConsole
             init => _promptText = value;
         }
 
-        protected List<TOption> Options { get; } = new();
-        protected TOption? DefaultOption
+        public List<TOption> Options { get; init; } = new();
+
+        public TOption? DefaultOption
         {
             get => _defaultOption;
             init

@@ -2,12 +2,18 @@
 {
     public abstract class MultiChoiceMenuBase<TValue, TOption, TReturn> : MenuBase<TValue, TOption, IEnumerable<TOption>, TReturn> where TOption : ValueOption<TValue>
     {
-        protected string? PrePrompt { get; }
+        public new string PromptText
+        {
+            get => base.PromptText;
+            init => PrePrompt = value;
+        }
+
+        protected string? PrePrompt { get; init; }
 
         public MultiChoiceMenuBase(string? prompt = null)
         {
             PrePrompt = prompt;
-            PromptText = "Choose options (comma delimited)";
+            base.PromptText = "Choose options (comma delimited)";
         }
 
         protected override IEnumerable<TOption> DisplayPrompt()
