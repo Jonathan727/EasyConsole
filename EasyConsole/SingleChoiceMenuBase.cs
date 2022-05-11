@@ -4,7 +4,9 @@
     {
         protected override TOption DisplayPrompt()
         {
-            var choice = Input.ReadInt("Choose an option", GetOptionRange());
+            var choice = HasDefaultOption
+                ? Input.ReadIntDoNotAppendDefaultToPrompt(PromptText, GetOptionRange(), DefaultOptionNumber)
+                : Input.ReadInt(PromptText, GetOptionRange());
             return GetOption(choice);
         }
     }

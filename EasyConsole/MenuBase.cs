@@ -11,9 +11,29 @@ namespace EasyConsole
     /// <typeparam name="TReturn">The type that will be returned by <see cref="OnUserAnsweredPrompt"/> and <see cref="Display"/></typeparam>
     public abstract class MenuBase<TValue, TOption, TSelection, TReturn> where TOption : ValueOption<TValue>
     {
+        private readonly string _promptText = "Choose an option";
+        private readonly TOption? _defaultOption;
+
+        protected string PromptText
+        {
+            get => DefaultOption != null ? $"{_promptText}  [{DefaultOptionNumber}. {DefaultOption.Name}]" : _promptText;
+            init => _promptText = value;
+        }
+
         protected List<TOption> Options { get; } = new();
-        protected bool AllowNullOptionValues { get; }
-        protected TOption? DefaultOption { get; }
+        protected TOption? DefaultOption
+        {
+            get => _defaultOption;
+            init
+            {
+                if (value != null && !Options.Contains(value))
+                {
+                    Options.Add(value);
+                }
+                _defaultOption = value;
+            }
+        }
+
         protected bool HasDefaultOption => DefaultOption != null;
         protected int DefaultOptionNumber
         {
@@ -27,14 +47,11 @@ namespace EasyConsole
                 return defaultOptionIndex + 1;
             }
         }
+        protected bool AllowNullOptionValues { get; }
 
         protected MenuBase(TOption? defaultOption = null, bool allowNullOptionValues = false)
         {
-            if (defaultOption != null)
-            {
-                DefaultOption = defaultOption;
-                Options.Add(defaultOption);
-            }
+            DefaultOption = defaultOption;
             AllowNullOptionValues = allowNullOptionValues;
         }
 
@@ -59,7 +76,7 @@ namespace EasyConsole
             {
                 throw new InvalidOperationException($"{typeof(TOption)}.{nameof(ValueOption<TValue>.Value)} was null or is not set in one or more {nameof(Options)}");
             }
-            if (HasDefaultOption && !Options.Contains(DefaultOption))
+            if (DefaultOption != null && !Options.Contains(DefaultOption))
             {
                 throw new InvalidOperationException($"{nameof(DefaultOption)} not found in {nameof(Options)}");
             }
@@ -126,7 +143,7 @@ namespace EasyConsole
 
         public bool Contains(string option)
         {
-            return Options.FirstOrDefault((op) => op.Name.Equals(option)) != null;
+            return Options.FirstOrDefault(op => op.Name.Equals(option)) != null;
         }
     }
 }

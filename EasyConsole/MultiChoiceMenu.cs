@@ -6,6 +6,19 @@
     /// <typeparam name="T"></typeparam>
     public class MultiChoiceMenu<T> : MultiChoiceMenuBase<T, ValueOption<T>, IReadOnlyCollection<T>>
     {
+        public MultiChoiceMenu()
+        {
+        }
+
+        public MultiChoiceMenu(string prompt, string defaultOption, T defaultValue) : this(prompt, new ValueOption<T>(defaultOption, defaultValue))
+        {
+        }
+
+        public MultiChoiceMenu(string prompt, ValueOption<T> defaultOption) : base(prompt)
+        {
+            DefaultOption = defaultOption;
+        }
+
         protected override IReadOnlyCollection<T> OnUserAnsweredPrompt(IEnumerable<ValueOption<T>> selection)
         {
             return selection.Select(x => x.Value).ToList();
