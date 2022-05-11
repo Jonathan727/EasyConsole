@@ -10,11 +10,11 @@
         {
         }
 
-        public MultiChoiceMenu(string prompt, string defaultOption, T defaultValue) : this(prompt, new ValueOption<T>(defaultOption, defaultValue))
+        public MultiChoiceMenu(string? prompt, string defaultOption, T defaultValue) : this(prompt, new ValueOption<T>(defaultOption, defaultValue))
         {
         }
 
-        public MultiChoiceMenu(string prompt, ValueOption<T> defaultOption) : base(prompt)
+        public MultiChoiceMenu(string? prompt, ValueOption<T> defaultOption) : base(prompt)
         {
             DefaultOption = defaultOption;
         }

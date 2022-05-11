@@ -599,6 +599,32 @@ namespace EasyConsole
             return choices;
         }
 
+        public static IReadOnlyCollection<TEnum> ReadMultiChoiceEnum<TEnum>(string prompt, TEnum @default) where TEnum : struct, Enum
+        {
+            if (!typeof(TEnum).IsEnum)
+            {
+                throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
+            }
+
+            var options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value));
+            var menu = new MultiChoiceMenu<TEnum>(null, Enum.GetName(@default) ?? @default.ToString(), @default);
+            menu.AddRange(options);
+
+            Output.WriteLine(prompt);
+            return menu.Display();
+        }
+
+        public static IReadOnlyCollection<TEnum> ReadMultiChoiceEnum<TEnum>(string prompt, params TEnum[] @default) where TEnum : struct, Enum
+        {
+            if (!typeof(TEnum).IsEnum)
+            {
+                throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
+            }
+
+            var options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value));
+            throw new NotImplementedException();
+        }
+
         private static IEnumerable<(string name, TEnum value)> GetEnumNamesAndValues<TEnum>() where TEnum : struct, Enum
         {
             var names = Enum.GetNames<TEnum>();
@@ -610,6 +636,16 @@ namespace EasyConsole
             }
 
             return names.Zip(values);
+        }
+
+        private static IEnumerable<(string name, TEnum value)> GetEnumNamesAndValues<TEnum>(params TEnum[] enums) where TEnum : struct, Enum
+        {
+            return enums.Select(x => (Enum.GetName(x) ?? throw new InvalidOperationException($"No name for {typeof(TEnum)} value {x}"), x));
+        }
+
+        private static IEnumerable<string> GetEnumNames<TEnum>(params TEnum[] enums) where TEnum : struct, Enum
+        {
+            return enums.Select(x => Enum.GetName(x) ?? throw new InvalidOperationException($"No name for {typeof(TEnum)} value {x}"));
         }
 
         #endregion
