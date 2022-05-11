@@ -14,7 +14,7 @@ namespace EasyConsole
         private readonly string _promptText = "Choose an option";
         private readonly TOption? _defaultOption;
 
-        protected string PromptText
+        public string PromptText
         {
             get => DefaultOption != null ? $"{_promptText}  [{DefaultOptionNumber}. {DefaultOption.Name}]" : _promptText;
             init => _promptText = value;
