@@ -23,7 +23,7 @@
 
         protected override ValueOption<T> DisplayPrompt()
         {
-            var choice = Input.ReadIntDoNotAppendDefaultToPrompt($"{_prompt}  [{DefaultOptionIndex + 1}. {DefaultOption.Name}]:", min: 1, max: Options.Count, DefaultOptionIndex + 1);
+            var choice = Input.ReadIntDoNotAppendDefaultToPrompt($"{_prompt}  [{DefaultOptionIndex + 1}. {DefaultOption.Name}]:", GetOptionRange(), DefaultOptionIndex + 1);
             return GetOption(choice);
         }
     }
