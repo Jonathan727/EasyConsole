@@ -51,6 +51,12 @@ namespace Demo.Pages
                         Output.WriteLine(ConsoleColor.Green, "You selected {0}", string.Join(", ", input));
                         break;
                     }
+                    case InputDemo.MultiChoiceEnumWithDefault:
+                    {
+                        var input = Input.ReadMultiChoiceEnum("Select multiple fruits", Fruit.Banana);
+                        Output.WriteLine(ConsoleColor.Green, "You selected {0}", string.Join(", ", input));
+                        break;
+                    }
                     case InputDemo.MultiChoiceInt:
                     {
                         const int min = -10000;
@@ -104,6 +110,7 @@ namespace Demo.Pages
         ReadEnum,
         ReadEnumWithDefault,
         MultiChoiceEnum,
+        MultiChoiceEnumWithDefault,
         MultiChoiceInt,
         String,
         StringWithDefault,
