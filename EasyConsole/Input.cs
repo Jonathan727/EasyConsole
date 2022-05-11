@@ -193,6 +193,44 @@ namespace EasyConsole
             }
         }
 
+        internal static IReadOnlyCollection<int> ReadMultiChoiceIntDoNotAppendDefaultToPrompt(string prompt, IntRange range, params int[] @default)
+        {
+            Output.DisplayPrompt(prompt);
+            return ReadMultiChoiceInt(range, @default);
+        }
+
+        public static IReadOnlyCollection<int> ReadMultiChoiceInt(string prompt, IntRange range, params int[] @default)
+        {
+            Output.DisplayPrompt($"{prompt} [{@default}]");
+            return ReadMultiChoiceInt(range, @default);
+        }
+
+        private static IReadOnlyCollection<int> ReadMultiChoiceInt(IntRange range, IReadOnlyCollection<int> @default)
+        {
+            while (true) // Loop indefinitely
+            {
+                var userInput = Console.ReadLine();
+                if (userInput == null)
+                {
+                    throw new UserInputCanceledException();
+                }
+
+                if (string.IsNullOrEmpty(userInput))
+                {
+                    return @default;
+                }
+
+                var values = userInput.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var results = Array.ConvertAll(values, s => int.TryParse(s, out var i) ? (int?)i : null);
+                if (results.Any() && results.All(x => x is not null && range.IsInside(x.Value)))
+                {
+                    return Array.ConvertAll(results, x => x!.Value);
+                }
+
+                Output.DisplayPrompt($"Please enter a comma delimited list of integers between {range.Min} and {range.Max} (inclusive):");
+            }
+        }
+
         #endregion
 
         #region String
