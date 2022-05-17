@@ -13,6 +13,7 @@ namespace EasyConsole
     {
         private readonly string _promptText = "Choose an option";
         private readonly TOption? _defaultOption;
+        private readonly List<TOption> _options = new();
 
         public string PromptText
         {
@@ -20,7 +21,18 @@ namespace EasyConsole
             init => _promptText = value;
         }
 
-        public List<TOption> Options { get; init; } = new();
+        public List<TOption> Options
+        {
+            get => _options;
+            init
+            {
+                _options = value;
+                if (DefaultOption != null && !_options.Contains(DefaultOption))
+                {
+                    _options.Insert(0, DefaultOption);
+                }
+            }
+        }
 
         public TOption? DefaultOption
         {
