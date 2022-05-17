@@ -550,12 +550,11 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var menu = new ValueMenu<TEnum>();
-
-            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
+            var menu = new ValueMenu<TEnum>
             {
-                menu.Add(name, value);
-            }
+                PromptText = prompt,
+                Options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList(),
+            };
 
             Output.WriteLine(prompt);
             return menu.Display();
@@ -568,12 +567,12 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var menu = new ValueMenu<TEnum>(prompt, Enum.GetName(@default) ?? @default.ToString(), @default);
-
-            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
+            var menu = new ValueMenu<TEnum>
             {
-                menu.Add(name, value);
-            }
+                PromptText = prompt,
+                DefaultOption = new ValueOption<TEnum>(Enum.GetName(@default) ?? @default.ToString(), @default),
+                Options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList(),
+            };
 
             Output.WriteLine(prompt);
             return menu.Display();
@@ -586,17 +585,14 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var menu = new MultiChoiceMenu<TEnum>();
-
-            foreach (var (name, value) in GetEnumNamesAndValues<TEnum>())
+            var menu = new MultiChoiceMenu<TEnum>
             {
-                menu.Add(name, value);
-            }
+                PromptText = prompt,
+                Options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList(),
+            };
 
             Output.WriteLine(prompt);
-            var choices = menu.Display();
-
-            return choices;
+            return menu.Display();
         }
 
         public static IReadOnlyCollection<TEnum> ReadMultiChoiceEnum<TEnum>(string prompt, TEnum @default) where TEnum : struct, Enum
@@ -606,13 +602,11 @@ namespace EasyConsole
                 throw new ArgumentException("TEnum must be an enumerated type", nameof(TEnum));
             }
 
-            var options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList();
-            var defaultOption = options.FirstOrDefault(x => x.Value.Equals(@default)) ?? throw new InvalidOperationException();
             var menu = new MultiChoiceMenu<TEnum>
             {
                 PromptText = prompt,
-                DefaultOption = defaultOption,
-                Options = options,
+                DefaultOption = new ValueOption<TEnum>(Enum.GetName(@default) ?? @default.ToString(), @default),
+                Options = GetEnumNamesAndValues<TEnum>().Select(x => new ValueOption<TEnum>(x.name, x.value)).ToList(),
             };
 
             Output.WriteLine(prompt);
