@@ -29,7 +29,7 @@ namespace EasyConsole
             {
                 if (value != null && !Options.Contains(value))
                 {
-                    Options.Add(value);
+                    Options.Insert(0, value);
                 }
                 _defaultOption = value;
             }

@@ -2,9 +2,9 @@
 
 namespace Demo.Pages;
 
-internal class SampleTablePage : Page
+internal class SampleListPage : Page
 {
-    public SampleTablePage(Program program) : base("Table", program)
+    public SampleListPage(Program program) : base("List", program)
     {
     }
 
@@ -23,8 +23,8 @@ internal class SampleTablePage : Page
                 {
                     1,
                     2,
-                    3
-                }
+                    3,
+                },
             },
             new SampleData { Id = 2, Name = "Steve",Description = "Stephen Glenn Martin (born August 14, 1945) is an American actor, comedian, writer, producer, and musician. He has earned five Grammy Awards, a Primetime Emmy Award, and was awarded an Honorary Academy Award at the Academy's 5th Annual Governors Awards in 2013.[1] Among many honors, he has received the Mark Twain Prize for American Humor, the Kennedy Center Honors, and an AFI Life Achievement Award. In 2004, Comedy Central ranked Martin at sixth place in a list of the 100 greatest stand-up comics.", Inserted = DateTime.Now.AddMinutes(23), RoleIds = null },
             new SampleData
@@ -34,35 +34,34 @@ internal class SampleTablePage : Page
                 Inserted = DateTime.Now.AddHours(-4),
                 RoleIds = new[]
                 {
-                    3
-                }
+                    3,
+                },
             },
         };
 
-        var table = new ConsoleTable<SampleData>("Sample Table with default styling", sampleData);
-        table.Render();
+        new ConsoleList<SampleData>(sampleData).Render();
 
-        table.BorderStyle = ConsoleTable<SampleData>.BorderStyleOption.DoubleLine;
-        table.Title = "DoubleLine border styling";
-        table.Render();
+        Input.ReadString("Press [Enter] to show a very long list");
 
-        table.BorderStyle = ConsoleTable<SampleData>.BorderStyleOption.DoubleLineHorizontal;
-        table.Title = "DoubleLineHorizontal border styling";
-        table.Render();
+        List<SampleData> longSampleData = new List<SampleData>();
 
-        table.BorderStyle = ConsoleTable<SampleData>.BorderStyleOption.DoubleLineVertical;
-        table.Render();
+        var id = 0;
+        for (var i = 0; i < 2000; i++)
+        {
+            foreach (var data in sampleData)
+            {
+                longSampleData.Add(new SampleData
+                {
+                    Id = id++,
+                    Description = data.Description,
+                    Inserted = data.Inserted,
+                    RoleIds = data.RoleIds,
+                    Name = data.Name,
+                });
+            }
+        }
 
-        table.Title = "DoubleLineVertical table style with EnableRowSeparators set to true";
-        table.EnableRowSeparators = true;
-        table.Render();
-
-        table.Title = "Word wrap enabled";
-        table.EnableRowSeparators = true;
-        table.EnableWordWrap = true;
-        table.ColumnInfos[2]
-            .MaxWidth = 60;
-        table.Render();
+        new ConsoleList<SampleData>(longSampleData).Render();
 
         Input.ReadString("Press [Enter] to navigate home");
         await Program.NavigateHome();

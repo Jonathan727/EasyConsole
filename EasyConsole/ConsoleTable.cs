@@ -230,31 +230,13 @@ public class ConsoleTable<TData>
 
     private static string GetCellValue(PropertyInfo propertyInfo, TData item)
     {
-        var cellData = propertyInfo.GetValue(item, null);
-
-        var enumerableCellDataValue = GetCommaSeparateStringFromEnumerableObject(cellData);
-
-        if (enumerableCellDataValue != null)
+        var value = propertyInfo.GetValue(item);
+        return value switch
         {
-            return enumerableCellDataValue;
-        }
-
-        var cellValue = cellData?.ToString() ?? "null";
-        return cellValue;
-    }
-
-    private static string? GetCommaSeparateStringFromEnumerableObject(object? data)
-    {
-        if (data == null
-            || !data.GetType()
-                .IsAssignableTo(typeof(IEnumerable))
-            || data.GetType().IsAssignableTo(typeof(string)))
-        {
-            return null;
-        }
-        
-        var items = (from object enumerableItem in (IEnumerable)data select enumerableItem.ToString() ?? string.Empty);
-        return string.Join(',', items);
+            string => value.ToString() ?? "null",
+            IEnumerable enumerable => string.Join(", ", enumerable.Cast<object>().Select(x => x?.ToString() ?? "null")),
+            _ => value?.ToString() ?? "null",
+        };
     }
 
     public class ColumnInfo
