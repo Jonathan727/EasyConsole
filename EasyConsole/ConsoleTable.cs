@@ -5,6 +5,8 @@ namespace EasyConsole;
 
 public class ConsoleTable<TData>
 {
+    private static readonly IEnumerable<PropertyInfo> PropertyInfos = typeof(TData).GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(property => property.CanRead);
+
     private readonly List<ColumnInfo> _columnInfos = new();
 
     public IReadOnlyList<ColumnInfo> ColumnInfos => _columnInfos;
@@ -31,9 +33,7 @@ public class ConsoleTable<TData>
     {
         Title = title;
         TableData = tableData;
-        var publicProperties = typeof(TData).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(property => property.CanRead);
-        foreach (var publicProperty in publicProperties)
+        foreach (var publicProperty in PropertyInfos)
         {
             var width = CalculateColumnWidth(publicProperty, tableData);
             _columnInfos.Add(new ColumnInfo(publicProperty.Name, width, 20, publicProperty));
@@ -45,11 +45,7 @@ public class ConsoleTable<TData>
         var currentTextColor = Console.ForegroundColor;
 
         // title
-        var titleLength = new[]
-        {
-            Title.Length,
-            Console.BufferWidth - 2,
-        }.Min();
+        var titleLength = Min(Title.Length, Console.BufferWidth - 1);
 
         Console.ForegroundColor = BorderColor;
         Console.Write(BorderStyle[10]);
@@ -79,8 +75,7 @@ public class ConsoleTable<TData>
                 Console.Write(BorderStyle[i == 0 ? 6 : 5]);
             }
 
-            if ((Console.CursorLeft + columnInfo.RenderWidth > titleLength && Console.CursorLeft < titleLength + 1)
-                || (i == ColumnInfos.Count - 1 && !visited))
+            if ((Console.CursorLeft + columnInfo.RenderWidth > titleLength && Console.CursorLeft < titleLength + 1) || (i == ColumnInfos.Count - 1 && !visited))
             {
                 visited = true;
                 var endOfColumn = Console.CursorLeft + columnInfo.RenderWidth;
@@ -174,8 +169,7 @@ public class ConsoleTable<TData>
             }
             while (moreWordWrapNeeded && EnableWordWrap);
 
-            if (EnableRowSeparators
-                && i < TableData.Count - 1)
+            if (EnableRowSeparators && i < TableData.Count - 1)
             {
                 RenderRowSeparator();
             }
@@ -221,12 +215,12 @@ public class ConsoleTable<TData>
         }
     }
 
-    private static int CalculateColumnWidth(PropertyInfo publicProperty, IReadOnlyCollection<TData> tableData) =>
-        tableData.Select(
-                data => GetCellValue(publicProperty, data)
-                    .Length)
+    private static int CalculateColumnWidth(PropertyInfo publicProperty, IReadOnlyCollection<TData> tableData)
+    {
+        return tableData.Select(data => GetCellValue(publicProperty, data).Length)
             .Prepend(publicProperty.Name.Length)
             .Max();
+    }
 
     private static string GetCellValue(PropertyInfo propertyInfo, TData item)
     {
@@ -237,6 +231,11 @@ public class ConsoleTable<TData>
             IEnumerable enumerable => string.Join(", ", enumerable.Cast<object>().Select(x => x?.ToString() ?? "null")),
             _ => value?.ToString() ?? "null",
         };
+    }
+
+    private static T Min<T>(T first, T second) where T : IComparable<T>
+    {
+        return Comparer<T>.Default.Compare(first, second) < 0 ? first : second;
     }
 
     public class ColumnInfo
@@ -255,12 +254,10 @@ public class ConsoleTable<TData>
 
         public int MaxWidth { get; set; }
 
-        public int RenderWidth =>
-            new[]
-            {
-                DataWidth,
-                MaxWidth
-            }.Min();
+        /// <summary>
+        /// Calculates the smaller of <see cref="DataWidth"/> or <see cref="MaxWidth"/>
+        /// </summary>
+        public int RenderWidth => Min(MaxWidth, DataWidth);
 
         public PropertyInfo PropertyInfo { get; }
     }
