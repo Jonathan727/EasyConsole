@@ -27,7 +27,8 @@ public class MultiChoiceMultiValueMenu<T> : MultiChoiceMenuBase<T, MultiValueOpt
     {
         return selection.SelectMany(x => x.Value).ToList();
     }
-    public void Add(string name, T[] values)
+
+    public void Add(string name, params T[] values)
     {
         Add(new MultiValueOption<T>(name, values));
     }
