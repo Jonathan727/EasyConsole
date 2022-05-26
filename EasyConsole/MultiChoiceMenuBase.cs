@@ -1,6 +1,6 @@
 ﻿namespace EasyConsole
 {
-    public abstract class MultiChoiceMenuBase<TValue, TOption, TReturn> : MenuBase<TValue, TOption, IEnumerable<TOption>, TReturn> where TOption : ValueOption<TValue>
+    public abstract class MultiChoiceMenuBase<TValue, TOption, TReturn> : MenuBase<TValue, TOption, IEnumerable<TOption>, TReturn> where TOption : class, IOption
     {
         public new string PromptText
         {
