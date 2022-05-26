@@ -3,6 +3,10 @@
 
     public class MultiValueOption<T> : ValueOption<ICollection<T>>
     {
+        public MultiValueOption(string name, IEnumerable<T> values) : base(name, values.ToArray())
+        {
+        }
+
         public MultiValueOption(string name, params T[] values) : base(name, values)
         {
             if (values.Length == 0)
