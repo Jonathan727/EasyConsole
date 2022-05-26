@@ -1,7 +1,7 @@
 ﻿namespace EasyConsole
 {
 
-    public class ValueOption<T> : IEquatable<ValueOption<T>>
+    public class ValueOption<T> : IEquatable<ValueOption<T>>, IOption
     {
         public string Name { get; }
 
@@ -11,6 +11,11 @@
         {
             Name = name;
             Value = value;
+        }
+
+        public bool IsValueNull()
+        {
+            return Value == null;
         }
 
         public bool Equals(ValueOption<T>? other)

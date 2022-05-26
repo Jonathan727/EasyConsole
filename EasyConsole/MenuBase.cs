@@ -6,10 +6,10 @@ namespace EasyConsole
     /// Generic base class for a menu that shows the user a list of options and processes the user's selection
     /// </summary>
     /// <typeparam name="TValue">The type of <see cref="ValueOption{T}.Value"/> in each element of <see cref="Options"/></typeparam>
-    /// <typeparam name="TOption">A <see cref="ValueOption{T}"/> containing <typeparamref name="TValue"/></typeparam>
+    /// <typeparam name="TOption">A <see cref="IOption"/> like <see cref="ValueOption{T}"/> containing <typeparamref name="TValue"/></typeparam>
     /// <typeparam name="TSelection">The type returned by <see cref="DisplayPrompt"/> indicating user's choice(s). Could for example be as single <typeparamref name="TSelection"/> or an <see cref="IEnumerable{T}"/> of <typeparamref name="TSelection"/>. The result is handled by <see cref="OnUserAnsweredPrompt"/></typeparam>
     /// <typeparam name="TReturn">The type that will be returned by <see cref="OnUserAnsweredPrompt"/> and <see cref="Display"/></typeparam>
-    public abstract class MenuBase<TValue, TOption, TSelection, TReturn> where TOption : ValueOption<TValue>
+    public abstract class MenuBase<TValue, TOption, TSelection, TReturn> where TOption : class, IOption
     {
         private readonly string _promptText = "Choose an option";
         private readonly TOption? _defaultOption;
@@ -85,7 +85,7 @@ namespace EasyConsole
             {
                 throw new InvalidOperationException($"No items in {nameof(Options)}.");
             }
-            if (checkForNull && Options.Any(x => x.Value is null))
+            if (checkForNull && Options.Any(x => x.IsValueNull()))
             {
                 throw new InvalidOperationException($"{typeof(TOption)}.{nameof(ValueOption<TValue>.Value)} was null or is not set in one or more {nameof(Options)}");
             }
