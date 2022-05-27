@@ -57,6 +57,16 @@ namespace Demo.Pages
                         Output.WriteLine(ConsoleColor.Green, "You selected {0}", string.Join(", ", input));
                         break;
                     }
+                    case InputDemo.MultiChoiceMenuEnumWithAllDefault:
+                    {
+                        var menu = new MultiChoiceMultiValueMenu<Fruit>("Select multiple fruits", "(All)", Enum.GetValues<Fruit>())
+                        {
+                            Options = GetEnumNamesAndValues<Fruit>().Select(x => new MultiValueOption<Fruit>(x.name, x.value)).ToList(),
+                        };
+                        var result = menu.Display();
+                        Output.WriteLine(ConsoleColor.Green, "You selected {0}", string.Join(", ", result));
+                        break;
+                    }
                     case InputDemo.MultiChoiceInt:
                     {
                         const int min = -10000;
@@ -94,6 +104,19 @@ namespace Demo.Pages
             Input.ReadString("Press [Enter] to navigate home");
             await Program.NavigateHome();
         }
+
+        private static IEnumerable<(string name, TEnum value)> GetEnumNamesAndValues<TEnum>() where TEnum : struct, Enum
+        {
+            var names = Enum.GetNames<TEnum>();
+            var values = Enum.GetValues<TEnum>();
+
+            if (names.Length != values.Length)
+            {
+                throw new ArgumentException($"{nameof(Enum)}.{nameof(Enum.GetNames)}.{nameof(names.Length)} != {nameof(Enum)}.{nameof(Enum.GetValues)}.{nameof(values.Length)}", nameof(TEnum));
+            }
+
+            return names.Zip(values);
+        }
     }
 
     enum Fruit
@@ -111,6 +134,7 @@ namespace Demo.Pages
         ReadEnumWithDefault,
         MultiChoiceEnum,
         MultiChoiceEnumWithDefault,
+        MultiChoiceMenuEnumWithAllDefault,
         MultiChoiceInt,
         String,
         StringWithDefault,
