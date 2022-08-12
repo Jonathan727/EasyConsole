@@ -389,7 +389,7 @@ namespace EasyConsole
                     return @default;
                 }
 
-                if (DateTime.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime))
+                if (DateTime.TryParse(userInput, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime))
                 {
                     return dateTime;
                 }
@@ -412,7 +412,7 @@ namespace EasyConsole
                     return @default;
                 }
 
-                if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime))
+                if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime))
                 {
                     return dateTime;
                 }
@@ -483,7 +483,7 @@ namespace EasyConsole
                     return false;
                 }
 
-                if (DateTimeOffset.TryParse(userInput2, null, DateTimeStyles.AssumeUniversal, out var dateTime2))
+                if (DateTimeOffset.TryParse(userInput2, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime2))
                 {
                     result = dateTime2;
                     return true;
@@ -499,7 +499,7 @@ namespace EasyConsole
                 return true;
             }
 
-            if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AssumeUniversal, out var dateTime))
+            if (DateTimeOffset.TryParse(userInput, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime))
             {
                 result = dateTime;
                 return true;
