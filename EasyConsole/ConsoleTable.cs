@@ -5,9 +5,10 @@ namespace EasyConsole;
 
 public class ConsoleTable<TData>
 {
-    private static readonly IEnumerable<PropertyInfo> PropertyInfos = typeof(TData).GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(property => property.CanRead);
+    private static readonly IEnumerable<PropertyInfo> PublicProperties = typeof(TData).GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(property => property.CanRead);
 
     private readonly List<ColumnInfo> _columnInfos = new();
+    private readonly List<List<string>> _dataValues;
 
     public IReadOnlyList<ColumnInfo> ColumnInfos => _columnInfos;
 
@@ -33,10 +34,16 @@ public class ConsoleTable<TData>
     {
         Title = title;
         TableData = tableData;
-        foreach (var publicProperty in PropertyInfos)
+
+        _dataValues = TableData.Select(row => GetRowValues(row).ToList()).ToList();
+
+        var i = 0;
+        foreach (var publicProperty in PublicProperties)
         {
-            var width = CalculateColumnWidth(publicProperty, tableData);
+            var columnValues = _dataValues.Select(row => row[i]).ToList();
+            var width = CalculateColumnWidth(publicProperty, columnValues);
             _columnInfos.Add(new ColumnInfo(publicProperty.Name, width, 20, publicProperty));
+            i++;
         }
     }
 
@@ -125,16 +132,15 @@ public class ConsoleTable<TData>
         }
 
         // data rows
-        for (var i = 0; i < TableData.Count; i++)
+        for (var row = 0; row < TableData.Count; row++)
         {
             var rowData = new string[ColumnInfos.Count];
 
             // populate rowData
-            for (var j = 0; j < ColumnInfos.Count; j++)
+            for (var column = 0; column < ColumnInfos.Count; column++)
             {
-                var columnInfo = ColumnInfos[j];
-                var cellData = GetCellValue(columnInfo.PropertyInfo, TableData[i]);
-                rowData[j] = cellData;
+                var cellData = _dataValues[row][column];
+                rowData[column] = cellData;
             }
 
             bool moreWordWrapNeeded;
@@ -169,7 +175,7 @@ public class ConsoleTable<TData>
             }
             while (moreWordWrapNeeded && EnableWordWrap);
 
-            if (EnableRowSeparators && i < TableData.Count - 1)
+            if (EnableRowSeparators && row < TableData.Count - 1)
             {
                 RenderRowSeparator();
             }
@@ -222,6 +228,16 @@ public class ConsoleTable<TData>
             .Max();
     }
 
+    private static int CalculateColumnWidth(PropertyInfo publicProperty, IEnumerable<string> propertyValues)
+    {
+        return Max(propertyValues.Max(x => x.Length), publicProperty.Name.Length);
+    }
+
+    private static IEnumerable<string> GetRowValues(TData rowData)
+    {
+        return PublicProperties.Select(propertyInfo => GetCellValue(propertyInfo, rowData));
+    }
+
     private static string GetCellValue(PropertyInfo propertyInfo, TData item)
     {
         var value = propertyInfo.GetValue(item);
@@ -236,6 +252,11 @@ public class ConsoleTable<TData>
     private static T Min<T>(T first, T second) where T : IComparable<T>
     {
         return Comparer<T>.Default.Compare(first, second) < 0 ? first : second;
+    }
+
+    private static T Max<T>(T first, T second) where T : IComparable<T>
+    {
+        return Comparer<T>.Default.Compare(first, second) > 0 ? first : second;
     }
 
     public class ColumnInfo
