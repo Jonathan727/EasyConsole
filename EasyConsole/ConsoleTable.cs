@@ -172,8 +172,7 @@ public class ConsoleTable<TData>
                 }
 
                 RenderEndOfLine();
-            }
-            while (moreWordWrapNeeded && EnableWordWrap);
+            } while (moreWordWrapNeeded && EnableWordWrap);
 
             if (EnableRowSeparators && row < TableData.Count - 1)
             {
@@ -283,6 +282,64 @@ public class ConsoleTable<TData>
         public PropertyInfo PropertyInfo { get; }
     }
 
+    public enum BorderCharacter
+    {
+        /// <summary>
+        /// │
+        /// </summary>
+        Vertical,
+
+        /// <summary>
+        /// ┤
+        /// </summary>
+        VerticalAndLeft,
+
+        /// <summary>
+        /// ┐
+        /// </summary>
+        DownAndLeft,
+
+        /// <summary>
+        /// └
+        /// </summary>
+        UpAndRight,
+
+        /// <summary>
+        /// ┴
+        /// </summary>
+        UpAndHorizontal,
+
+        /// <summary>
+        /// ┬
+        /// </summary>
+        DownAndHorizontal,
+
+        /// <summary>
+        /// ├
+        /// </summary>
+        VerticalAndRight,
+
+        /// <summary>
+        /// ─
+        /// </summary>
+        Horizontal,
+
+        /// <summary>
+        /// ┼
+        /// </summary>
+        VerticalAndHorizontal,
+
+        /// <summary>
+        /// ┘
+        /// </summary>
+        UpAndLeft,
+
+        /// <summary>
+        /// ┌
+        /// </summary>
+        DownAndRight,
+    }
+
     public class BorderStyleOption
     {
         public static readonly BorderStyleOption SingleLine = new("│┤┐└┴┬├─┼┘┌");
@@ -301,5 +358,7 @@ public class ConsoleTable<TData>
         }
 
         public char this[int index] => _characters[index];
+
+        public char this[BorderCharacter which] => _characters[(int)which];
     }
 }
