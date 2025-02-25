@@ -55,14 +55,14 @@ public class ConsoleTable<TData>
         var titleLength = Min(Title.Length, Console.BufferWidth - 1);
 
         Console.ForegroundColor = BorderColor;
-        Console.Write(BorderStyle[10]);
-        Console.Write(new string(BorderStyle[7], titleLength));
-        Console.WriteLine(BorderStyle[2]);
-        Console.Write(BorderStyle[0]);
+        Console.Write(BorderStyle[BorderCharacter.DownAndRight]);
+        Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], titleLength));
+        Console.WriteLine(BorderStyle[BorderCharacter.DownAndLeft]);
+        Console.Write(BorderStyle[BorderCharacter.Vertical]);
         Console.ForegroundColor = TitleTextColor;
         Console.Write(Title.Length > titleLength ? Title[..titleLength] : Title);
         Console.ForegroundColor = BorderColor;
-        Console.WriteLine(BorderStyle[0]);
+        Console.WriteLine(BorderStyle[BorderCharacter.Vertical]);
 
         // border above the header row.
         Console.ForegroundColor = BorderColor;
@@ -74,12 +74,12 @@ public class ConsoleTable<TData>
 
             if (renderIntersection)
             {
-                Console.Write(BorderStyle[8]);
+                Console.Write(BorderStyle[BorderCharacter.VerticalAndHorizontal]);
                 renderIntersection = false;
             }
             else
             {
-                Console.Write(BorderStyle[i == 0 ? 6 : 5]);
+                Console.Write(BorderStyle[i == 0 ? BorderCharacter.VerticalAndRight : BorderCharacter.DownAndHorizontal]);
             }
 
             if ((Console.CursorLeft + columnInfo.RenderWidth > titleLength && Console.CursorLeft < titleLength + 1) || (i == ColumnInfos.Count - 1 && !visited))
@@ -87,7 +87,7 @@ public class ConsoleTable<TData>
                 visited = true;
                 var endOfColumn = Console.CursorLeft + columnInfo.RenderWidth;
                 var x1 = titleLength + 1 - Console.CursorLeft;
-                Console.Write(new string(BorderStyle[7], x1));
+                Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], x1));
 
                 if (Console.CursorLeft == endOfColumn)
                 {
@@ -95,28 +95,28 @@ public class ConsoleTable<TData>
                 }
                 else
                 {
-                    Console.Write(BorderStyle[4]);
+                    Console.Write(BorderStyle[BorderCharacter.UpAndHorizontal]);
                 }
 
                 var x2 = endOfColumn - Console.CursorLeft;
                 if (x2 > 0)
                 {
-                    Console.Write(new string(BorderStyle[7], x2));
+                    Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], x2));
                 }
             }
             else
             {
-                Console.Write(new string(BorderStyle[7], columnInfo.RenderWidth));
+                Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], columnInfo.RenderWidth));
             }
         }
 
-        RenderEndOfLine(BorderStyle[7], BorderStyle[2]);
+        RenderEndOfLine(BorderStyle[BorderCharacter.Horizontal], BorderStyle[BorderCharacter.DownAndLeft]);
 
         // header row with labels
         foreach (var columnInfo in ColumnInfos)
         {
             Console.ForegroundColor = BorderColor;
-            Console.Write(BorderStyle[0]);
+            Console.Write(BorderStyle[BorderCharacter.Vertical]);
             Console.ForegroundColor = HeaderTextColor;
 
             Console.Write(
@@ -151,7 +151,7 @@ public class ConsoleTable<TData>
                 {
                     var columnInfo = ColumnInfos[j];
                     Console.ForegroundColor = BorderColor;
-                    Console.Write(BorderStyle[0]);
+                    Console.Write(BorderStyle[BorderCharacter.Vertical]);
 
                     Console.ForegroundColor = RowTextColor;
                     var cellData = rowData[j];
@@ -185,11 +185,11 @@ public class ConsoleTable<TData>
         for (var i = 0; i < ColumnInfos.Count; i++)
         {
             var columnInfo = ColumnInfos[i];
-            Console.Write(BorderStyle[i == 0 ? 3 : 4]);
-            Console.Write(new string(BorderStyle[7], columnInfo.RenderWidth));
+            Console.Write(BorderStyle[i == 0 ? BorderCharacter.UpAndRight : BorderCharacter.UpAndHorizontal]);
+            Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], columnInfo.RenderWidth));
         }
 
-        RenderEndOfLine(BorderStyle[7], BorderStyle[9]);
+        RenderEndOfLine(BorderStyle[BorderCharacter.Horizontal], BorderStyle[BorderCharacter.UpAndLeft]);
 
         Console.ForegroundColor = currentTextColor;
 
@@ -199,16 +199,16 @@ public class ConsoleTable<TData>
             for (var i = 0; i < ColumnInfos.Count; i++)
             {
                 var columnInfo = ColumnInfos[i];
-                Console.Write(BorderStyle[i == 0 ? 6 : 8]);
-                Console.Write(new string(BorderStyle[7], columnInfo.RenderWidth));
+                Console.Write(BorderStyle[i == 0 ? BorderCharacter.VerticalAndRight : BorderCharacter.VerticalAndHorizontal]);
+                Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], columnInfo.RenderWidth));
             }
 
-            RenderEndOfLine(BorderStyle[7], BorderStyle[1]);
+            RenderEndOfLine(BorderStyle[BorderCharacter.Horizontal], BorderStyle[BorderCharacter.VerticalAndLeft]);
         }
 
         void RenderEndOfLine(char paddingCharacter = ' ', char? endingCharacter = null)
         {
-            endingCharacter ??= BorderStyle[0];
+            endingCharacter ??= BorderStyle[BorderCharacter.Vertical];
             Console.ForegroundColor = BorderColor;
             if (Console.CursorLeft < Console.BufferWidth - 2)
             {
