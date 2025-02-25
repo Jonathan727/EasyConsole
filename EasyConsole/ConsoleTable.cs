@@ -199,7 +199,7 @@ public class ConsoleTable<TData>
             for (var i = 0; i < ColumnInfos.Count; i++)
             {
                 var columnInfo = ColumnInfos[i];
-                Console.Write(BorderStyle[i == 0 ? BorderCharacter.VerticalAndRight : B]);
+                Console.Write(BorderStyle[i == 0 ? BorderCharacter.VerticalAndRight : BorderCharacter.VerticalAndHorizontal]);
                 Console.Write(new string(BorderStyle[BorderCharacter.Horizontal], columnInfo.RenderWidth));
             }
 
