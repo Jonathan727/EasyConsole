@@ -82,7 +82,7 @@ public class ConsoleTable<TData>
                 Console.Write(BorderStyle[i == 0 ? BorderCharacter.VerticalAndRight : BorderCharacter.DownAndHorizontal]);
             }
 
-            if ((Console.CursorLeft + columnInfo.RenderWidth > titleLength && Console.CursorLeft < titleLength) || (i == ColumnInfos.Count - 1 && !visited))
+            if ((Console.CursorLeft + columnInfo.RenderWidth > titleLength && Console.CursorLeft <= titleLength + 1) || (i == ColumnInfos.Count - 1 && !visited))
             {
                 visited = true;
                 var endOfColumn = Console.CursorLeft + columnInfo.RenderWidth;
